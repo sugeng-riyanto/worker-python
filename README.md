@@ -13,8 +13,8 @@ Apps Script (existing UI)
 export worker  (python -m physics_studio)
     |  stages a safe Quarto book, renders, signs download links for 30 minutes
     v
-PDF (Typst, orange-book 0.7.1, ISO B5)   DOCX (B5 reference styles)
-HTML / EPUB (Gold Standard CSS)          flipbook (PDF pages, offline HTML)
+PDF (Typst textbook template, ISO B5)    DOCX (B5 reference styles)
+HTML / EPUB (textbook CSS)               flipbook (PDF pages, offline HTML)
 
 generator  (python -m physics_studio.generator)
     pasted TOC or Google Doc  ->  JSON
@@ -34,43 +34,40 @@ Jobs are stored under `JOB_ROOT` (default `/tmp/physics-studio-jobs`) so a resta
 | `physics_studio/worker.py` | HTTP API |
 | `physics_studio/staging.py` | Zip checks, assets, project YAML |
 | `physics_studio/render.py` | Quarto, combined HTML, error capture |
-| `physics_studio/assets/` | Typst show rule, Lua filter, CSS |
+| `physics_studio/assets/` | Typst textbook template, Lua filters, CSS |
 | `physics_studio/flipbook.py` | PDF pages to a self-contained flipbook |
 | `physics_studio/generator/` | TOC parser, Gemini and DeepSeek, Drive, Sheets |
 | `fixtures/master_toc.txt` | Series A0–C2 table of contents |
 | `fixtures/sample_chapter/` | Chapter with a figure and all three boxes |
-| `Dockerfile` | Quarto 1.11.9, fonts, Poppler, cached Typst package |
+| `Dockerfile` | Quarto 1.11.9, textbook fonts, Poppler |
 
-## Gold Standard boxes
+## Textbook layout
 
-Authors write ordinary fenced divs. Raw ` ```{=typst} ` blocks stay rejected.
+The PDF follows a modern IGCSE student-book layout (see `docs/LAYOUT.md`): ISO B5 page with a 34 mm outer sidebar, a coloured chapter opener, chapter tabs and folio blocks, banded numbered section headings, blue-header tables, and coloured learning boxes. Two themes ship: `studio` (default, orange/blue, sans body) and `classic` (blue, serif body). Pick one with `bc-theme: classic` in the uploaded `_quarto.yml`, or set `PHYSICS_THEME` on the worker.
 
-```markdown
-::: {.givens}
-**G (Given):** 120 m east and 50 m north.
-**E (Equation):** R = sqrt(120^2 + 50^2)
-:::
+Authors write ordinary fenced divs. Raw ` ```{=typst} ` blocks stay rejected. An optional `title="..."` overrides the label. Labels follow `lang`: English by default (`lang: en` or no `lang`), Indonesian for `lang: id`.
 
-::: {.workspace}
-250 mm = ________ m
+| Class (aliases) | PDF rendering | Default label (id / en) |
+| --- | --- | --- |
+| `.objectives` (`.tujuan`, `.learning-outcomes`) | peach panel under the section banner | Dalam subbab ini, kamu akan mempelajari: / In this section, you will learn the following: |
+| `.worked-example` (`.contoh-soal`), `.givens` | white box, crimson tab, numbered per chapter | Contoh Soal 2.1 / Worked Example 2.1 |
+| `.practice` (`.latihan`) | navy tab, numbered | Ayo Berlatih 2.1 / Let's Practise 2.1 |
+| `.review` (`.uji-kompetensi`) | full-width box, orange tab | Ayo Mengulang / Let's Review |
+| `.summary` (`.rangkuman`) | blue tab | Ringkasan / Summary |
+| `.definition`, `.key-equation` (`.rumus`) | light-blue centred statement | — |
+| `.workspace`, `.think`, `.exam-trap`, `.hook`, `.practical`, `.figure-brief`, `.note` | tinted box with a coloured rule | Ruang Kerja Aktif, Pertanyaan Pemantik, Jebakan Ujian, Fenomena, Kegiatan Praktikum, Ilustrasi |
+| `.quick-check`, `.remember`, `.key-terms`, `.qr`, `.teacher-note`, `.enrichment`, `.info`, `.link` | sidebar note in the outer margin (main column if longer than ~420 characters) | Cek Cepat, Ingat!, Istilah Kunci, Pindai, Catatan Guru, Pengayaan, Tahukah Kamu?, Tautan |
 
-Teacher Verification Stamp: [ ] L1 [ ] L2 [ ] L3
-:::
-
-::: {.exam-trap}
-Dividing 5 cm² by 100 is not the conversion to m².
-:::
-```
-
-`::: {.givens-box}`, `::: {.active-workspace}`, and `::: {.examtrap}` are accepted aliases.
+`textbook.lua` runs before the box filter. It turns Google Docs' escaped `\$...\$` back into math, strips `CHAPTER n:` / `MODULE n:` prefixes, title-cases all-caps headings, and recovers boxes from older drafts (scaffold headings such as "Sub-Section Pedagogical Header", and labelled blockquotes such as "QR WATCH" or "ACTIVE LEARNING WORKSPACE").
 
 | Format | Rendering |
 | --- | --- |
-| PDF | Typst block. Navy, teal, and crimson rules from the B5 palette. |
-| HTML and EPUB | CSS classes `.givens`, `.workspace`, `.exam-trap` |
+| PDF | `typst-show.typ` (`bc-box`, `bc-aside`), marginalia sidebar from Quarto's bundled packages |
+| HTML and EPUB | `textbook.css`; sidebar notes float right and stack on phones; HTML embeds the fonts |
+| DOCX | Calibri / Arial Narrow styles, orange heading bands, banded tables, one paragraph style per box |
 | DOCX | Paragraph styles `GivensBox`, `WorkspaceBox`, `ExamTrap` in the B5 reference doc |
 
-`_quarto.yml` in the zip is read for metadata only: title, subtitle, author, language, date, cover image, and EPUB publisher, rights, description, and identifier. Execution, filters, and output paths in that file are ignored. Missing metadata still defaults to the previous title, author, and `lang: id`.
+`_quarto.yml` in the zip is read for metadata only: title, subtitle, author, language, date, cover image, and EPUB publisher, rights, description, and identifier. Execution, filters, and output paths in that file are ignored. Missing metadata still defaults to the previous title and author; `lang` now defaults to `en` (English labels). Set `lang: id` for Indonesian labels.
 
 Images (`.png`, `.jpg`, `.jpeg`, `.svg`) and `.css` are kept when the path stays inside the project. SVG script and CSS `@import` are rejected. Each format no longer needs its own upload.
 
@@ -107,7 +104,7 @@ That writes `toc.json` for every series, a chapter `.qmd` using the three boxes,
 
 ## Cloud Run
 
-Build from this directory. The image compiles a tiny chapter during the build so orange-book 0.7.1 is cached and the Typst show rule is known to compile.
+Build from this directory. The image compiles a tiny chapter during the build so the Typst template is known to compile. Fonts (Source Sans 3, Barlow Condensed, both SIL OFL) are installed into `/usr/local/share/fonts/textbook`; `PHYSICS_FONT_DIR` points elsewhere for local runs.
 
 ```bash
 gcloud run deploy physics-studio-worker \
@@ -255,3 +252,10 @@ python -m physics_studio.generator \
 ```
 
 Drive uploads go to `Book A0/outputs/pdf/`, `docx/`, `html/`, `epub/`, and `flipbook/`.
+
+## Colour palettes
+
+`physics_studio/palettes.py` holds nine palettes: `studio` (default, MCE orange), `blue`, `classic` (OUP), `teal`, `forest`, `crimson`, `purple`, `amber`, and `dark` (screen-only; DOCX falls back to `studio`). Pick one with `bc-palette: teal` (or `book: {palette: teal}`) in the uploaded `_quarto.yml`, or set the worker-wide default with `PHYSICS_PALETTE`. When neither is set, the theme picks its own palette (`classic` → `classic`).
+
+Each palette sets roles (paper, ink, heading, primary, primary-text, on-primary, surface, the box fills and accents). `CONTRAST_RULES` lists every foreground/background pair the templates draw: 4.5:1 for normal text, and 3:1 for large text (14 pt bold or more) and borders. `tests/test_palettes.py` prints the full table (`python -m unittest -v tests.test_palettes`), and the Docker build runs it, so a palette that falls short fails the image build. At staging time the palette is written into the Typst partial (the `// <bc-palette>` block) and into `textbook-palette.css`, so PDF, HTML, EPUB, the flipbook, and DOCX all use the same colours.
+

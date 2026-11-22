@@ -42,7 +42,7 @@ def rasterize_pdf(pdf: Path, work: Path, *, dpi: int = 110, timeout: int = 240) 
     return [path.read_bytes() for path in pages]
 
 
-def flipbook_html(title: str, pages: list[bytes], *, lang: str = "id") -> str:
+def flipbook_html(title: str, pages: list[bytes], *, lang: str = "en") -> str:
     """Self-contained HTML. Page images are embedded, so the file works offline."""
     if not pages:
         raise RenderError("The flipbook needs at least one page image.")
@@ -52,7 +52,7 @@ def flipbook_html(title: str, pages: list[bytes], *, lang: str = "id") -> str:
     ]
     payload = ",".join('"' + item + '"' for item in encoded)
     safe_title = html.escape(title or "Physics Textbook", quote=True)
-    safe_lang = html.escape(lang or "id", quote=True)
+    safe_lang = html.escape(lang or "en", quote=True)
     count = len(pages)
     return f"""<!DOCTYPE html>
 <html lang="{safe_lang}">

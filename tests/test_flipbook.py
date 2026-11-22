@@ -37,6 +37,10 @@ class CombineHtmlTests(unittest.TestCase):
         self.assertIn("Vernier caliper", combined)
         self.assertIn('href="#part-bab-01"', combined)
         self.assertNotRegex(combined, r'href="[^"]+\.html')
+        # One <main>: several would overlap in Quarto's grid layout.
+        self.assertEqual(combined.count("<main"), 1)
+        self.assertEqual(combined.count("</main>"), 1)
+        self.assertIn('<section id="part-bab-01" class="book-part">', combined)
 
 
 if __name__ == "__main__":

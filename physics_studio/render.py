@@ -12,6 +12,7 @@ from pathlib import Path
 
 from physics_studio.flipbook import write_flipbook
 from physics_studio.formats import FILENAMES, QUARTO_TARGETS
+from physics_studio.palettes import DEFAULT_PALETTE, PALETTES
 from physics_studio.reference_docx import write_reference
 from physics_studio.render_error import RenderError
 
@@ -156,18 +157,24 @@ def _html_sort_key(path: Path) -> tuple:
 
 
 def _main_fragment(text: str, anchor: str) -> str | None:
+    """Inner HTML of a chapter page's <main>, wrapped in a section with a stable id."""
     start = text.find("<main")
     end = text.find("</main>")
     if start < 0 or end < 0:
         return None
-    fragment = text[start : end + len("</main>")]
-    if not re.match(r"<main[^>]*\sid=", fragment):
-        fragment = fragment.replace("<main", f'<main id="{anchor}"', 1)
-    return fragment
+    open_end = text.find(">", start)
+    if open_end < 0 or open_end > end:
+        return None
+    inner = text[open_end + 1 : end]
+    return f'<section id="{anchor}" class="book-part">\n{inner}\n</section>'
 
 
 def combine_book_html(render_dir: Path) -> str:
-    """Quarto books emit one HTML file per chapter. Join them so one signed link works offline."""
+    """Quarto books emit one HTML file per chapter. Join them so one signed link works offline.
+
+    Every chapter goes inside the shell page's single <main>. Several <main>
+    elements share one grid cell in Quarto's layout and draw on top of each other.
+    """
     pages = sorted(
         (path for path in render_dir.glob("*.html") if path.is_file()),
         key=_html_sort_key,
@@ -188,10 +195,11 @@ def combine_book_html(render_dir: Path) -> str:
     shell = shell_path.read_text(encoding="utf-8", errors="replace")
     start = shell.find("<main")
     end = shell.find("</main>")
-    if start < 0 or end < 0:
+    open_end = shell.find(">", start) if start >= 0 else -1
+    if start < 0 or end < 0 or open_end < 0:
         combined = shell
     else:
-        combined = shell[:start] + "\n".join(fragments) + shell[end + len("</main>") :]
+        combined = shell[: open_end + 1] + "\n".join(fragments) + shell[end:]
 
     def retarget(match: re.Match[str]) -> str:
         target = match.group(1).split("#", 1)[0].split("?", 1)[0]
@@ -239,7 +247,7 @@ def render_formats(project: Path, formats: list[str], timeout: int) -> dict[str,
     pdf_path: Path | None = None
     for fmt in seen:
         if fmt == "DOCX":
-            write_reference(project / "b5-reference.docx", quarto, env)
+            write_reference(project / "b5-reference.docx", quarto, env, _book_palette(project))
         _run([quarto, "render", "--to", QUARTO_TARGETS[fmt]], project, env, timeout, f"{fmt} render")
         suffix = {"PDF": (".pdf",), "DOCX": (".docx",), "HTML": (".html",), "EPUB": (".epub",)}[fmt]
         destination = output / FILENAMES[fmt]
@@ -271,7 +279,14 @@ def _book_title(project: Path) -> str:
     return match.group(1).strip() if match else "Physics Textbook Studio"
 
 
+def _book_palette(project: Path) -> str:
+    text = (project / "_quarto.yml").read_text(encoding="utf-8")
+    match = re.search(r"(?m)^bc-palette:\s*(\S+)\s*$", text)
+    name = match.group(1).strip("'\"") if match else ""
+    return name if name in PALETTES else DEFAULT_PALETTE
+
+
 def _book_lang(project: Path) -> str:
     text = (project / "_quarto.yml").read_text(encoding="utf-8")
     match = re.search(r"(?m)^lang:\s*(\S+)\s*$", text)
-    return match.group(1).strip("'\"") if match else "id"
+    return match.group(1).strip("'\"") if match else "en"
