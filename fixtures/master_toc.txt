@@ -1,0 +1,174 @@
+Complete Master Table of Contents — All Series (B5 Print Standard: 176 mm × 250 mm, 400–500 Pages)
+Dual-Curriculum Locking Rule: Each volume strictly pairs Indonesian National Curriculum (KepKa BSKAP No. 046/H/KR/2025) with ONLY ONE international syllabus (Cambridge IGCSE/AS/A Level OR IB DP 2025). Zero three-way triangulation inside any single volume.
+
+
+Book A0 — Grade 9 Foundation (450 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase D/E) + Cambridge IGCSE Physics (0625/0972, 2026–2028) — Part 1
+Front Matter (12 pp.): Preface, How to Use This Active Work-Textbook (G.I.V.E.N.S. & Teacher Verification Stamps), Dual-Curriculum Alignment Map, Mathematical & Experimental Skills Primer.
+Chapter 1: Physical Quantities, Measurement Techniques & Experimental Skills (40 pp.)
+1.1 SI Base & Derived Quantities, Prefixes & Standard Form (IGCSE 1.1 & BSKAP Sistem Pengukuran)
+1.2 Precision Measuring Instruments: Rulers, Measuring Cylinders, Vernier Calipers & Micrometer Screw Gauges
+1.3 Measuring Time Intervals, Oscillations & Human Reaction Error
+1.4 Scalar vs. Vector Quantities & Perpendicular Vector Addition (Graphical & Trigonometric)
+1.5 Experimental Design, Variables, Graphing & Uncertainty Fundamentals (AO3 / Keterampilan Proses)
+Chapter 2: Kinematics — Motion in One & Two Dimensions (45 pp.)
+2.1 Speed, Velocity & Uniform Acceleration (IGCSE 1.2)
+2.2 Distance–Time & Speed–Time Graphs (Gradients, Areas & Non-Uniform Acceleration)
+2.3 Free Fall Acceleration (g ≈ 9.8 m s⁻²) & Terminal Velocity in Fluids
+2.4 Two-Dimensional Projectile Motion Bridge (Gerak Dua Dimensi — BSKAP 046/2025 Fase E Core)
+Chapter 3: Mass, Weight, Gravitational Fields & Density (35 pp.)
+3.1 Mass as Inertia vs. Weight as Gravitational Force (W = mg) (IGCSE 1.3)
+3.2 Gravitational Field Strength (g) Across Planetary Environments
+3.3 Density (ρ = m/V) of Regular Solids, Irregular Solids & Liquids (IGCSE 1.4)
+3.4 Floating, Sinking & Buoyancy Predictions
+Chapter 4: Forces, Turning Effects & Elastic Deformation (48 pp.)
+4.1 Balanced & Unbalanced Forces: Newton's First & Second Laws (F = ma) (IGCSE 1.5.1)
+4.2 Friction, Drag & Newton's Third Law Action–Reaction Pairs
+4.3 Circular Motion & Centripetal Force (Qualitative Analysis)
+4.4 Turning Effects of Forces (Moments), Principle of Moments & Equilibrium (IGCSE 1.5.2)
+4.5 Centre of Gravity & Stability Engineering (IGCSE 1.5.3)
+4.6 Elastic Deformation, Hooke's Law (F = kx) & Limit of Proportionality
+Chapter 5: Linear Momentum & Impulse (35 pp.)
+5.1 Linear Momentum (p = mv) & Vector Sign Conventions (IGCSE 1.6)
+5.2 Impulse (FΔt = Δp), Resultant Force as Rate of Change of Momentum & Vehicle Safety
+5.3 Principle of Conservation of Momentum in Collisions & Explosions
+Chapter 6: Work, Energy, Power & Sustainable Resources (45 pp.)
+6.1 Energy Stores, Energy Pathways & Principle of Conservation of Energy (IGCSE 1.7.1)
+6.2 Mechanical Work Done (W = Fd cos θ), Kinetic Energy (Ek = 1/2 mv²) & Gravitational Potential Energy (ΔEp = mgΔh) (IGCSE 1.7.2)
+6.3 Power (P = ΔE/t) & Efficiency Calculations (IGCSE 1.7.4)
+6.4 Renewable & Non-Renewable Energy Resources and Indonesian Energy Transition (IGCSE 1.7.3 & BSKAP 046/2025 Fase E Energi Alternatif)
+Chapter 7: Pressure in Solids, Liquids & Gases (35 pp.)
+7.1 Solid Pressure (p = F/A) & Engineering Applications (IGCSE 1.8)
+7.2 Hydrostatic Liquid Pressure (Δp = ρgΔh), Pascal's Principle & Hydraulic Systems
+7.3 Atmospheric Pressure, Barometers & Manometers
+Chapter 8: Kinetic Particle Model of Matter & Gas Laws (35 pp.)
+8.1 States of Matter, Molecular Structure & Brownian Motion (IGCSE 2.1.1–2.1.2)
+8.2 Gas Pressure in Terms of Molecular Collisions & Boyle's Law (p₁V₁ = p₂V₂) (IGCSE 2.1.3)
+8.3 Absolute Zero (-273 °C) & The Kelvin Thermodynamic Scale
+Chapter 9: Thermal Properties, Expansion & Latent Heat (45 pp.)
+9.1 Thermal Expansion of Solids, Liquids & Gases in Engineering (IGCSE 2.2.1)
+9.2 Specific Heat Capacity (E = mcΔθ) & Calorimetry Investigations (IGCSE 2.2.2)
+9.3 Melting, Boiling, Evaporation Cooling & Specific Latent Heat (IGCSE 2.2.3)
+Chapter 10: Thermal Energy Transfer & Climate Science (40 pp.)
+10.1 Conduction in Metals vs. Non-Metals (Free Electrons & Lattice Vibrations) (IGCSE 2.3.1)
+10.2 Convection Currents in Fluids & Coastal Sea Breezes (IGCSE 2.3.2)
+10.3 Infrared Thermal Radiation: Emitters, Absorbers & Reflectors (IGCSE 2.3.3)
+10.4 Earth's Radiation Balance, Greenhouse Effect & Global Warming Mitigation (IGCSE 2.3.4 & BSKAP 046/2025 Fase E)
+Back Matter & Exam Mastery Suite (35 pp.): Full Grade 9 Mock Exam Set (IGCSE Paper 2, Paper 4 & Paper 6 Part 1 + BSKAP Fase E AKM/HOTS Assessment), Formula Sheet, Practical Data Handling Guide & Glossary.
+
+
+Book A1 — Grade 10 (450 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase E) + Cambridge IGCSE Physics (0625/0972, 2026–2028) — Part 2 + Grade 9 Bridge
+Chapter 0: Scientific Measurement, Uncertainty & 2D Kinematics Bridge (40 pp.)
+0.1 SI Units, Dimensional Consistency & Significant Figures (BSKAP 046/2025 Fase E & IGCSE 1.1)
+0.2 Measurement Instruments & Experimental Uncertainty Analysis (AO3 / Keterampilan Proses)
+0.3 Vectors & Two-Dimensional Projectile Motion (Gerak Dua Dimensi — BSKAP 2025 Bridge)
+0.4 Grade 9 Mechanics & Thermal Physics Diagnostic Synthesis
+Chapter 1: General Wave Properties (40 pp.)
+1.1 Wave Motion: Transverse vs. Longitudinal Waves & Wavefronts (IGCSE 3.1)
+1.2 Wave Parameters & The Universal Wave Equation (v = fλ)
+1.3 Ripple Tank Phenomena: Reflection, Refraction & Diffraction
+1.4 Laboratory Investigation: Measuring Wave Speed & Diffraction Gaps (Paper 5/6)
+Chapter 2: Light & Optical Systems (45 pp.)
+2.1 Reflection of Light & Plane Mirror Image Formation (IGCSE 3.2.1)
+2.2 Refraction of Light, Refractive Index & Snell's Law (IGCSE 3.2.2)
+2.3 Total Internal Reflection, Critical Angle & Optical Fibres
+2.4 Thin Converging & Diverging Lenses: Ray Diagrams & Magnification (IGCSE 3.2.3)
+2.5 Dispersion of Light & Monochromatic vs. Polychromatic Spectra (IGCSE 3.2.4)
+Chapter 3: Electromagnetic Spectrum & Sound Waves (40 pp.)
+3.1 The Electromagnetic Spectrum: Properties, Communications & Medical Uses (IGCSE 3.3)
+3.2 Longitudinal Sound Waves, Compression/Rarefaction & Pitch/Loudness (IGCSE 3.4)
+3.3 Speed of Sound in Solids, Liquids & Gases; Echoes & Sonar
+3.4 Ultrasound in Medicine & Non-Destructive Industrial Testing
+Chapter 4: Electric Charge & DC Circuits (50 pp.)
+4.1 Electrostatic Charge, Conductors, Insulators & Electric Fields (IGCSE 4.2.1)
+4.2 Electric Current (I = Q/t), Electromotive Force (EMF) & Potential Difference (IGCSE 4.2.2–4.2.3)
+4.3 Resistance (R = V/I), Resistivity & I–V Characteristics (IGCSE 4.2.4)
+4.4 Series & Parallel Circuits, Potential Dividers & Sensing Circuits (LDR/Thermistor) (IGCSE 4.3)
+Chapter 5: Practical Electricity & Electrical Safety (35 pp.)
+5.1 Electrical Power (P = IV) & Energy Consumption in kWh (IGCSE 4.2.5)
+5.2 Electrical Hazards, Fuses, Circuit Breakers, Earthing & Double Insulation (IGCSE 4.4)
+5.3 Household Energy Audits & National Energy Conservation (BSKAP Fase E)
+Chapter 6: Magnetism & Electromagnetism (40 pp.)
+6.1 Magnetic Fields, Induced Magnetism & Permanent vs. Electromagnets (IGCSE 4.1)
+6.2 Magnetic Effect of a Current: Straight Wires & Solenoids (IGCSE 4.5.3)
+6.3 Force on a Current-Carrying Conductor & Fleming's Left-Hand Rule (IGCSE 4.5.4)
+6.4 The Direct Current (DC) Motor & Split-Ring Commutator (IGCSE 4.5.5)
+Chapter 7: Electromagnetic Induction & Power Transmission (40 pp.)
+7.1 Electromagnetic Induction & Lenz's Law (IGCSE 4.5.1)
+7.2 The Alternating Current (AC) Generator & Slip Rings (IGCSE 4.5.2)
+7.3 Step-Up & Step-Down Transformers (Vp/Vs = Np/Ns) (IGCSE 4.5.6)
+7.4 High-Voltage National Grid Transmission & Power Loss Reduction
+Chapter 8: Nuclear Physics & Radioactivity (45 pp.)
+8.1 The Nuclear Model of the Atom, Rutherford Scattering & Isotopes (IGCSE 5.1)
+8.2 Background Radiation & Detection Methods (GM Tube) (IGCSE 5.2.1)
+8.3 Alpha, Beta & Gamma Emissions: Ionisation, Penetration & Field Deflection (IGCSE 5.2.2)
+8.4 Radioactive Decay Equations & Half-Life Analysis (IGCSE 5.2.3–5.2.4)
+8.5 Nuclear Fission, Fusion & Radiation Safety Protocols (IGCSE 5.2.5)
+Chapter 9: Space Physics, Climate Change & Renewable Energy (45 pp.)
+9.1 Earth, Moon & The Solar System: Orbital Speed (v = 2πr/T) & Accretion Model (IGCSE 6.1)
+9.2 The Sun as a Star, Stellar Life Cycles & Supernovae (IGCSE 6.2.1–6.2.2)
+9.3 Galaxies, Redshift, Hubble's Law & Cosmic Microwave Background Radiation (IGCSE 6.2.3)
+9.4 Global Warming Mechanism & Indonesian Renewable Energy Engineering (Geothermal, Solar PV, Micro-Hydro — BSKAP 046/2025 Fase E Core)
+Exam Mastery & Reference Suite (30 pp.): Full IGCSE Paper 2, Paper 4 & Paper 6 Mock Exams + BSKAP Fase E AKM/HOTS Literacy Assessment + Formula & Data Sheet.
+
+
+Book B1 — Grade 11 Cambridge Track (460 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase F Year 1) + Cambridge International AS Level Physics (9702, 2025–2027)
+Chapter 1: Physical Quantities, Measurement & Uncertainty (35 pp.) — AS Topic 1 & BSKAP Keterampilan Proses
+Chapter 2: Kinematics in One & Two Dimensions (40 pp.) — AS Topic 2 (Linear & Projectile Motion)
+Chapter 3: Dynamics, Forces & Linear Momentum (45 pp.) — AS Topic 3 & Topic 4.1 (Newton's Laws, Drag, Momentum Conservation)
+Chapter 4: Turning Effects, Rotational Equilibrium & Structural Engineering (45 pp.) — AS Topic 4.2 + BSKAP 2025 Fase F Bridge (Torque, Centre of Gravity, Rigid Body Static Equilibrium & Structural Design)
+Chapter 5: Hydrostatic & Dynamic Fluid Mechanics (45 pp.) — AS Topic 4.3 (Density, Pressure, Upthrust) + BSKAP 2025 Fase F Core (Equation of Continuity, Bernoulli's Principle, Torricelli's Theorem & Aerodynamics)
+Chapter 6: Work, Energy, Power & Efficiency (40 pp.) — AS Topic 5
+Chapter 7: Deformation of Solids & Elasticity (35 pp.) — AS Topic 6 & BSKAP Fase F (Stress, Strain, Young Modulus, Elastic Potential Energy)
+Chapter 8: Mechanical & Electromagnetic Waves (40 pp.) — AS Topic 7 & BSKAP Fase F (Progressive Waves, Intensity, Transverse/Longitudinal, Doppler Effect, Polarisation)
+Chapter 9: Superposition, Interference & Diffraction (40 pp.) — AS Topic 8 (Stationary Waves, Double-Slit Interference, Diffraction Gratings)
+Chapter 10: Electric Current & Direct Current (DC) Circuits (45 pp.) — AS Topic 9 & Topic 10 & BSKAP Fase F (Resistivity, Kirchhoff's Laws, Internal Resistance, Potential Dividers)
+Chapter 11: Particle Physics & Fundamental Interactions (30 pp.) — AS Topic 11 (Hadrons, Baryons, Mesons, Quarks, Leptons, Beta Decay)
+Exam Suite (20 pp.): Full AS Level Paper 1, Paper 2 & Paper 3 Practical Guide + BSKAP Fase F Project Rubric.
+
+
+Book B2 — Grade 12 Cambridge Track (480 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase F Year 2) + Cambridge International A Level Physics (9702, 2025–2027)
+Chapter 1: Motion in a Circle & Gravitational Fields (45 pp.) — A Level Topic 12 & Topic 13 (Centripetal Acceleration, Newton's Law of Gravitation, Gravitational Potential, Geostationary Orbits)
+Chapter 2: Temperature, Ideal Gases & Kinetic Theory (40 pp.) — A Level Topic 14 & Topic 15
+Chapter 3: Thermodynamics & Climate Energy Balance (40 pp.) — A Level Topic 16 & BSKAP 2025 Fase F (First Law of Thermodynamics, Work Done by Gas, Carnot Efficiency & Climate Change Thermodynamics)
+Chapter 4: Simple Harmonic Oscillations & Resonance (40 pp.) — A Level Topic 17
+Chapter 5: Electric Fields & Capacitance (45 pp.) — A Level Topic 18 & Topic 19 (Coulomb's Law, Electric Potential, Parallel-Plate Capacitors, RC Discharge)
+Chapter 6: Magnetic Fields & Electromagnetic Induction (50 pp.) — A Level Topic 20 & BSKAP Fase F (Flux Density, Hall Effect, Charged Particles in B-Fields, Faraday's & Lenz's Laws)
+Chapter 7: Alternating Currents & Power Rectification (35 pp.) — A Level Topic 21 & BSKAP Fase F (RMS Values, Transformers, Half/Full-Wave Rectification & Smoothing)
+Chapter 8: Quantum Physics & Wave-Particle Duality (45 pp.) — A Level Topic 22 & BSKAP Fase F (Photoelectric Effect, Photon Momentum, de Broglie Wavelength, Atomic Energy Levels)
+Chapter 9: Nuclear Physics & Binding Energy (40 pp.) — A Level Topic 23 (Mass Defect, Binding Energy per Nucleon, Exponential Decay Law)
+Chapter 10: Medical Physics & Diagnostic Imaging (35 pp.) — A Level Topic 24 (Ultrasound Transducers, X-ray Attenuation, CT Scanning, PET Scanners)
+Chapter 11: Astronomy, Cosmology & Special Relativity Bridge (35 pp.) — A Level Topic 25 (Standard Candles, Wien's & Stefan-Boltzmann Laws, Hubble's Law, Big Bang) + BSKAP Modern Physics Relativity Overview
+Chapter 12: Digital Electronics & Logic Systems (30 pp.) — BSKAP 2025 Fase F Mandatory Module (Teori Dasar Digital: Binary Systems, Logic Gates, Truth Tables, ADC/DAC & Sensor Interfacing)
+
+
+Book C1 — Grade 11 IB DP Track (460 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase F Year 1) + IB Diploma Programme Physics (2025 Thematic Syllabus SL/HL — Year 1)
+Chapter 1: Space, Time & Kinematics [Theme A.1] (40 pp.) — Linear & 2D Projectile Motion, Fluid Resistance & Terminal Speed (SL/HL)
+Chapter 2: Forces, Momentum & Equilibrium [Theme A.2] (45 pp.) — Free-Body Diagrams, Friction, Hooke's Law, Impulse & Conservation of Momentum (SL/HL)
+Chapter 3: Work, Energy, Power & Elasticity Bridge [Theme A.3 + BSKAP] (40 pp.) — Work, Mechanical Energy, Efficiency + BSKAP Stress, Strain & Young's Modulus Bridge
+Chapter 4: Rigid Body Mechanics & Structural Design [Theme A.4 HL + BSKAP] (40 pp.) — Torque, Moment of Inertia, Angular Momentum (IB HL) + BSKAP Structural Static Equilibrium
+Chapter 5: Fluid Mechanics & Bernoulli's Principle [BSKAP 2025 Fase F Core] (35 pp.) — Hydrostatic Pressure, Buoyancy, Continuity Equation & Bernoulli's Equation
+Chapter 6: Thermal Transfers, Greenhouse Effect & Gas Laws [Themes B.1, B.2, B.3] (45 pp.) — Conduction/Convection/Radiation, Solar Constant, Albedo, Energy Balance & Ideal Gas Laws (SL/HL)
+Chapter 7: Laws of Thermodynamics & Heat Engines [Theme B.4 HL + BSKAP] (35 pp.) — First & Second Laws, Entropy, Carnot Cycle (IB HL) & Climate Thermodynamics
+Chapter 8: Current & Electric Circuits [Theme B.5] (40 pp.) — Drift Velocity, Resistivity, Kirchhoff's Laws, Internal Resistance & Potential Dividers (SL/HL)
+Chapter 9: Simple Harmonic Motion & Wave Model [Themes C.1, C.2] (40 pp.) — SHM Kinematics/Energy (SL/HL), Transverse/Longitudinal Waves & EM Spectrum
+Chapter 10: Wave Phenomena, Standing Waves & Doppler Effect [Themes C.3, C.4, C.5] (45 pp.) — Reflection, Refraction, Single/Double Slit Diffraction, Gratings, Resonance & Doppler Equations (SL/HL)
+IB Year 1 Lab & NOS/TOK Toolkit (15 pp.): Uncertainties, Linearization, Graphing & Collaborative Sciences Project Guide.
+
+
+Book C2 — Grade 12 IB DP Track (480 Pages)
+Curriculum Pairing: Indonesian National (BSKAP 046/2025 Fase F Year 2) + IB Diploma Programme Physics (2025 Thematic Syllabus SL/HL — Year 2)
+Chapter 1: Galilean & Special Relativity [Theme A.5 HL + BSKAP] (40 pp.) — Postulates, Lorentz Factor, Time Dilation, Length Contraction, Spacetime Diagrams & Relativistic Momentum (IB HL)
+Chapter 2: Gravitational Fields & Orbital Mechanics [Theme D.1] (40 pp.) — Newton's Law, Field Strength, Gravitational Potential, Escape Speed & Kepler's Laws (SL/HL)
+Chapter 3: Electric & Magnetic Fields [Theme D.2] (45 pp.) — Coulomb's Law, Electric Potential, Field Lines, Magnetic Flux Density & Ampère's Law (SL/HL)
+Chapter 4: Motion in Electromagnetic Fields & Capacitance Bridge [Theme D.3 + BSKAP] (40 pp.) — Lorentz Force, Circular Trajectories, Velocity Selectors + BSKAP Parallel-Plate Capacitance Bridge
+Chapter 5: Electromagnetic Induction & AC Circuits [Theme D.4 HL + BSKAP] (45 pp.) — Magnetic Flux, Faraday's & Lenz's Laws, AC Generators, Transformers, RMS Values (IB HL) + BSKAP RLC Resonance Bridge
+Chapter 6: Atomic Structure & Quantum Physics [Themes E.1, E.2 HL] (45 pp.) — Emission/Absorption Spectra, Rutherford Scattering, Photoelectric Effect, Compton Scattering & de Broglie Matter Waves (SL/HL)
+Chapter 7: Radioactive Decay & Nuclear Fission [Themes E.3, E.4] (40 pp.) — Mass Defect, Binding Energy, Exponential Decay Law, Half-Life, Nuclear Reactors & Safety (SL/HL)
+Chapter 8: Nuclear Fusion, Stellar Evolution & Cosmology [Theme E.5] (40 pp.) — Stellar Parallax, Luminosity, HR Diagrams, Life Cycle of Stars & Cosmic Expansion (SL/HL)
+Chapter 9: Digital Technology & Logic Systems [BSKAP 2025 Fase F Mandatory Module] (30 pp.) — Binary Logic Gates, Truth Tables, ADC/DAC Conversion & Modern Digital Sensors
+IB Internal Assessment & Exam Mastery Guide (35 pp.): Step-by-Step Scientific Investigation (IA) Guide (Criterion A–D) + Full Paper 1A, Paper 1B & Paper 2 Mock Exams.
