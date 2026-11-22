@@ -65,7 +65,7 @@ local SPECS = {
 -- Sidebar notes longer than this stay in the main column (the sidebar is 34 mm).
 local ASIDE_LIMIT = 420
 
-local is_indonesian = true
+local is_indonesian = false
 
 local function kind_of(el)
   for _, class in ipairs(el.classes) do
@@ -115,7 +115,7 @@ local function label_paragraph(text)
 end
 
 function Meta(meta)
-  local lang = meta.lang and pandoc.utils.stringify(meta.lang) or "id"
+  local lang = meta.lang and pandoc.utils.stringify(meta.lang) or "en"
   is_indonesian = lang:sub(1, 2) == "id"
 end
 

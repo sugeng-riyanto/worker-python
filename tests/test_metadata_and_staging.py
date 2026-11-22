@@ -49,7 +49,7 @@ format:
         meta = parse_quarto_yaml("project:\n  type: book\n")
         self.assertEqual(meta.title, "Physics Textbook Studio")
         self.assertEqual(meta.author, "Academic Physics Publishing Team")
-        self.assertEqual(meta.lang, "id")
+        self.assertEqual(meta.lang, "en")
 
     def test_theme_is_limited_to_known_names(self):
         self.assertEqual(parse_quarto_yaml("bc-theme: classic\n").theme, "classic")

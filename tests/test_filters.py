@@ -21,7 +21,7 @@ def _pandoc() -> list[str] | None:
 PANDOC = _pandoc()
 
 
-def run(markdown: str, to: str, lang: str = "id") -> str:
+def run(markdown: str, to: str, lang: str | None = "id") -> str:
     proc = subprocess.run(
         [
             *PANDOC,
@@ -30,8 +30,7 @@ def run(markdown: str, to: str, lang: str = "id") -> str:
             "-t",
             to,
             "--wrap=none",
-            "-M",
-            f"lang={lang}",
+            *(["-M", f"lang={lang}"] if lang else []),
             "-L",
             str(ASSETS / "textbook.lua"),
             "-L",
@@ -164,6 +163,26 @@ class BoxRenderingTests(unittest.TestCase):
 
         document = zipfile.ZipFile(io.BytesIO(proc.stdout)).read("word/document.xml").decode("utf-8")
         self.assertIn("BoxPractice", document)
+
+
+
+class EnglishDefaultTests(unittest.TestCase):
+    def setUp(self):
+        if not PANDOC:
+            self.skipTest("pandoc not installed")
+
+    def test_labels_are_english_without_lang(self):
+        source = "# Motion\n\n::: {.worked-example}\nA car travels.\n:::\n\n::: {.practice}\n1. Try.\n:::\n\n::: {.review}\nQ1\n:::\n"
+        typst = run(source, "typst", lang=None)
+        self.assertIn("Worked Example", typst)
+        self.assertIn("Let's Practise", typst)
+        self.assertIn("Let's Review", typst)
+        self.assertNotIn("Contoh Soal", typst)
+
+    def test_english_lang_gives_english_labels_and_id_stays_available(self):
+        source = "::: {.quick-check}\nWhat is speed?\n:::\n"
+        self.assertIn("Quick Check", run(source, "typst", lang="en"))
+        self.assertIn("Cek Cepat", run(source, "typst", lang="id"))
 
 
 if __name__ == "__main__":

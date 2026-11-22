@@ -45,7 +45,7 @@ Jobs are stored under `JOB_ROOT` (default `/tmp/physics-studio-jobs`) so a resta
 
 The PDF follows a modern IGCSE student-book layout (see `docs/LAYOUT.md`): ISO B5 page with a 34 mm outer sidebar, a coloured chapter opener, chapter tabs and folio blocks, banded numbered section headings, blue-header tables, and coloured learning boxes. Two themes ship: `studio` (default, orange/blue, sans body) and `classic` (blue, serif body). Pick one with `bc-theme: classic` in the uploaded `_quarto.yml`, or set `PHYSICS_THEME` on the worker.
 
-Authors write ordinary fenced divs. Raw ` ```{=typst} ` blocks stay rejected. An optional `title="..."` overrides the label. Labels follow `lang` (Indonesian for `id`, English otherwise).
+Authors write ordinary fenced divs. Raw ` ```{=typst} ` blocks stay rejected. An optional `title="..."` overrides the label. Labels follow `lang`: English by default (`lang: en` or no `lang`), Indonesian for `lang: id`.
 
 | Class (aliases) | PDF rendering | Default label (id / en) |
 | --- | --- | --- |
@@ -67,7 +67,7 @@ Authors write ordinary fenced divs. Raw ` ```{=typst} ` blocks stay rejected. An
 | DOCX | Calibri / Arial Narrow styles, orange heading bands, banded tables, one paragraph style per box |
 | DOCX | Paragraph styles `GivensBox`, `WorkspaceBox`, `ExamTrap` in the B5 reference doc |
 
-`_quarto.yml` in the zip is read for metadata only: title, subtitle, author, language, date, cover image, and EPUB publisher, rights, description, and identifier. Execution, filters, and output paths in that file are ignored. Missing metadata still defaults to the previous title, author, and `lang: id`.
+`_quarto.yml` in the zip is read for metadata only: title, subtitle, author, language, date, cover image, and EPUB publisher, rights, description, and identifier. Execution, filters, and output paths in that file are ignored. Missing metadata still defaults to the previous title and author; `lang` now defaults to `en` (English labels). Set `lang: id` for Indonesian labels.
 
 Images (`.png`, `.jpg`, `.jpeg`, `.svg`) and `.css` are kept when the path stays inside the project. SVG script and CSS `@import` are rejected. Each format no longer needs its own upload.
 

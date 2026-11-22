@@ -10,7 +10,7 @@
 -- Explicit ::: {.class} divs written by the generator are left alone.
 
 local stringify = pandoc.utils.stringify
-local is_id = true
+local is_id = false
 
 -- ---------------------------------------------------------------- math
 local function plain_text(inl)
@@ -442,7 +442,7 @@ local function has_explicit_boxes(doc)
 end
 
 function Pandoc(doc)
-  local lang = doc.meta.lang and stringify(doc.meta.lang) or "id"
+  local lang = doc.meta.lang and stringify(doc.meta.lang) or "en"
   is_id = lang:sub(1, 2) == "id"
   -- math + code first (everywhere)
   doc = doc:walk({

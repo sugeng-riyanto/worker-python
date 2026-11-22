@@ -5,7 +5,7 @@
 #import "@preview/marginalia:0.3.1" as marginalia
 
 #let bc-theme-name = "$if(bc-theme)$$bc-theme$$else$studio$endif$"
-#let bc-lang = "$if(lang)$$lang$$else$id$endif$"
+#let bc-lang = "$if(lang)$$lang$$else$en$endif$"
 #let bc-id = bc-lang.starts-with("id")
 
 #let bc-themes = (

@@ -16,7 +16,7 @@ class BookMetadata:
     title: str = "Physics Textbook Studio"
     subtitle: str = ""
     author: str = "Academic Physics Publishing Team"
-    lang: str = "id"
+    lang: str = "en"
     date: str = ""
     cover_image: str = ""
     description: str = ""

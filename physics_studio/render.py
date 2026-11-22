@@ -281,4 +281,4 @@ def _book_title(project: Path) -> str:
 def _book_lang(project: Path) -> str:
     text = (project / "_quarto.yml").read_text(encoding="utf-8")
     match = re.search(r"(?m)^lang:\s*(\S+)\s*$", text)
-    return match.group(1).strip("'\"") if match else "id"
+    return match.group(1).strip("'\"") if match else "en"
