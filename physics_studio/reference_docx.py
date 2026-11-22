@@ -36,7 +36,15 @@ _STYLES = {
     "BoxFigureBrief": ("surface", "grey"),
     "BoxNote": ("grey-soft", "grey"),
     "BoxAside": ("blue-softer", "navy"),
+    # v14.2 problem-solving scaffolds and image placeholders
+    "BoxStrategyNavy": ("blue-softer", "navy"),
+    "BoxStrategyBlue": ("blue-softer", "blue"),
+    "BoxStrategyPurple": ("purple-soft", "purple"),
+    "BoxStrategyOrange": ("primary-soft", "primary"),
+    "FigureFrame": ("grey-soft", "grey"),
 }
+# Display names that differ from the style id (pandoc matches custom-style by name).
+_STYLE_NAMES = {"FigureFrame": "Figure Frame"}
 
 # Word has no font fallback, so DOCX uses fonts that ship with Office:
 # Calibri for body text (humanist sans like the PDF) and Arial Narrow for headings.
@@ -52,6 +60,17 @@ _BASE_STYLES = {
   <w:name w:val="Normal"/><w:qFormat/>
   <w:pPr><w:spacing w:after="120" w:line="276" w:lineRule="auto"/></w:pPr>
   <w:rPr><w:rFonts w:ascii="{_BODY_FONT}" w:hAnsi="{_BODY_FONT}" w:cs="{_BODY_FONT}"/><w:color w:val="@ink@"/><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr>
+</w:style>
+""",
+    # v14.2: body paragraphs justified (Word hyphenates them: settings autoHyphenation).
+    "BodyText": f"""<w:style w:type="paragraph" w:styleId="BodyText">
+  <w:name w:val="Body Text"/><w:basedOn w:val="Normal"/><w:link w:val="BodyTextChar"/><w:qFormat/>
+  <w:pPr><w:spacing w:before="0" w:after="120"/><w:jc w:val="both"/></w:pPr>
+</w:style>
+""",
+    "FirstParagraph": f"""<w:style w:type="paragraph" w:styleId="FirstParagraph">
+  <w:name w:val="First Paragraph"/><w:basedOn w:val="BodyText"/><w:next w:val="BodyText"/><w:qFormat/>
+  <w:pPr><w:jc w:val="both"/></w:pPr>
 </w:style>
 """,
     "Heading1": f"""<w:style w:type="paragraph" w:styleId="Heading1">
@@ -117,8 +136,12 @@ _BASE_STYLES = {
 
 
 def _style_xml(style_id: str, fill: str, border: str) -> str:
+    dashed = style_id == "FigureFrame"
+    line = "dashed" if dashed else "single"
+    left = "8" if dashed else "24"
+    jc = "left" if dashed else "both"
     return f"""<w:style w:type="paragraph" w:customStyle="1" w:styleId="{style_id}">
-  <w:name w:val="{style_id}"/>
+  <w:name w:val="{_STYLE_NAMES.get(style_id, style_id)}"/>
   <w:basedOn w:val="Normal"/>
   <w:uiPriority w:val="99"/>
   <w:qFormat/>
@@ -127,11 +150,12 @@ def _style_xml(style_id: str, fill: str, border: str) -> str:
     <w:ind w:left="180" w:right="120"/>
     <w:shd w:val="clear" w:color="auto" w:fill="{fill}"/>
     <w:pBdr>
-      <w:top w:val="single" w:sz="4" w:space="6" w:color="{border}"/>
-      <w:left w:val="single" w:sz="24" w:space="10" w:color="{border}"/>
-      <w:bottom w:val="single" w:sz="4" w:space="6" w:color="{border}"/>
-      <w:right w:val="single" w:sz="4" w:space="8" w:color="{border}"/>
+      <w:top w:val="{line}" w:sz="4" w:space="6" w:color="{border}"/>
+      <w:left w:val="{line}" w:sz="{left}" w:space="10" w:color="{border}"/>
+      <w:bottom w:val="{line}" w:sz="4" w:space="6" w:color="{border}"/>
+      <w:right w:val="{line}" w:sz="4" w:space="8" w:color="{border}"/>
     </w:pBdr>
+    <w:jc w:val="{jc}"/>
   </w:pPr>
 </w:style>
 """
@@ -156,11 +180,20 @@ def _patch_document(xml: str) -> str:
 
 
 def _patch_settings(xml: str) -> str:
-    if "<w:mirrorMargins" in xml:
-        return xml
+    """Mirror margins and automatic hyphenation, inserted in schema order (Word is strict)."""
     if "</w:settings>" not in xml:
         raise RenderError("reference.docx is missing word settings")
-    return xml.replace("</w:settings>", "<w:mirrorMargins/></w:settings>", 1)
+    if "<w:mirrorMargins" not in xml:
+        anchor = re.search(r"<w:proofState\b|<w:defaultTabStop\b|</w:settings>", xml)
+        xml = xml[: anchor.start()] + "<w:mirrorMargins/>" + xml[anchor.start():]
+    if "<w:autoHyphenation" not in xml:
+        tab = re.search(r"<w:defaultTabStop\b[^>]*/>", xml)
+        if tab:
+            xml = xml[: tab.end()] + '<w:autoHyphenation w:val="true"/>' + xml[tab.end():]
+        else:
+            anchor = re.search(r"<w:characterSpacingControl\b|</w:settings>", xml)
+            xml = xml[: anchor.start()] + '<w:autoHyphenation w:val="true"/>' + xml[anchor.start():]
+    return xml
 
 
 def _colour(template: str, palette: dict[str, str]) -> str:

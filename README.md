@@ -184,6 +184,16 @@ While the render is in progress:
 {"state": "running"}
 ```
 
+For `ALL`, each format is published as soon as it is rendered, so a running job can already carry links (v14.2). Save those right away and keep polling:
+
+```json
+{
+  "state": "running",
+  "outputs": {"PDF": "/files/<job>/<expires>/<signature>/physics.pdf"},
+  "pending": ["DOCX", "HTML", "EPUB", "FLIPBOOK"]
+}
+```
+
 Failure includes the Quarto stderr tail:
 
 ```json
@@ -206,7 +216,7 @@ Success for `ALL`:
 }
 ```
 
-A one-format job still sets `path`, and also sets `outputs` with that single entry. `path` for `ALL` is the PDF. Links are relative to `QUARTO_WORKER_URL`, expire after 30 minutes, and do not need the bearer token. `DOCX` and `EPUB` are sent as attachments. HTML is one self-contained book file. The flipbook is one HTML file with the PDF pages embedded as JPEG, so it opens offline.
+A one-format job still sets `path`, and also sets `outputs` with that single entry. `path` for `ALL` is the PDF. Links are relative to `QUARTO_WORKER_URL`, expire after 30 minutes, and do not need the bearer token. `DOCX` and `EPUB` are sent as attachments. HTML is one book file: images, CSS and scripts are inlined, while web fonts (Google Fonts) and MathJax load from a CDN, which keeps the file around 1–2 MB instead of 10–16 MB (set `PHYSICS_HTML_FONTS=embed` to inline the fonts again). The flipbook is one HTML file with the PDF pages embedded as JPEG, so it opens offline.
 
 ```javascript
 function pollRender(jobId) {
@@ -224,7 +234,7 @@ function pollRender(jobId) {
 }
 ```
 
-Poll until `state` is `done` or `failed`. On `done`, open `QUARTO_WORKER_URL + body.path`, or each value in `body.outputs`.
+Poll until `state` is `done` or `failed`. Any value in `body.outputs` can be fetched as soon as it appears, also while `state` is `running`. On `done`, open `QUARTO_WORKER_URL + body.path`, or each value in `body.outputs`.
 
 ## Generator
 

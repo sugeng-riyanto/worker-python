@@ -149,7 +149,7 @@ class TextbookStagingTests(unittest.TestCase):
     def test_textbook_filters_run_before_the_box_filter(self):
         work = self.stage({"bab-01.qmd": "# Gerak\n\nTeks.\n"}, {"PHYSICS_FONT_DIR": "/nonexistent"})
         config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
-        self.assertEqual(config["filters"], ["textbook.lua", "gold-boxes.lua"])
+        self.assertEqual(config["filters"], ["textbook.lua", "textbook-extras.lua", "gold-boxes.lua"])
         self.assertEqual(config["bc-theme"], "studio")
         self.assertTrue(config["crossref"]["chapters"])
         self.assertIn("textbook.css", config["format"]["html"]["css"])
@@ -171,11 +171,29 @@ class TextbookStagingTests(unittest.TestCase):
         work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
         config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
         self.assertEqual(config["format"]["typst"]["font-paths"], ["_fonts"])
+        # v14.2 default: HTML links Google Fonts instead of inlining them.
+        self.assertNotIn("textbook-fonts.css", config["format"]["html"]["css"])
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name, "PHYSICS_HTML_FONTS": "embed"})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
         self.assertTrue((work / "_fonts").is_symlink())
         self.assertEqual(config["format"]["html"]["css"][0], "textbook-fonts.css")
         css = (work / "textbook-fonts.css").read_text(encoding="utf-8")
         self.assertIn('url("_fonts/SourceSans3-Regular.woff2") format("woff2")', css)
         self.assertNotIn("textbook-fonts.css", config["format"]["epub"]["css"])
+
+    def test_epub_embeds_a_math_font_when_available(self):
+        fonts = tempfile.TemporaryDirectory()
+        self.addCleanup(fonts.cleanup)
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertNotIn("epub-fonts", config["format"]["epub"])
+        (Path(fonts.name) / "NotoSansMath-Regular.ttf").write_bytes(b"\x00\x01\x00\x00")
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertEqual(config["format"]["epub"]["epub-fonts"], ["_fonts/NotoSansMath-Regular.ttf"])
+        self.assertIn("epub-math.css", config["format"]["epub"]["css"])
+        self.assertNotIn("epub-math.css", config["format"]["html"]["css"])
+        self.assertIn('url("../fonts/NotoSansMath-Regular.ttf")', (work / "epub-math.css").read_text(encoding="utf-8"))
 
     def test_typst_template_has_no_unescaped_pandoc_dollars(self):
         from physics_studio.staging import ASSETS

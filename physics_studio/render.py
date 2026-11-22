@@ -8,6 +8,7 @@ import os
 import re
 import shutil
 import subprocess
+import urllib.parse
 from pathlib import Path
 
 from physics_studio.flipbook import write_flipbook
@@ -229,8 +230,67 @@ def embed_local_assets(html_path: Path) -> None:
     html_path.write_text(_ATTR.sub(replace_attr, text), encoding="utf-8")
 
 
-def render_formats(project: Path, formats: list[str], timeout: int) -> dict[str, str]:
-    """Render ``formats`` into ``project/_output`` and return format -> filename."""
+# v14.2: keep the single-file HTML small enough for Drive and the Apps Script viewer.
+GOOGLE_FONTS_CSS = (
+    "https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700"
+    "&family=Source+Sans+3:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+)
+_LINK_TAG = re.compile(r"<link\b[^>]*>", re.IGNORECASE)
+_FONT_FACE = re.compile(r"@font-face\s*\{[^{}]*\}", re.IGNORECASE)
+
+
+def html_font_mode() -> str:
+    """``cdn`` (default): link the web fonts from Google Fonts. ``embed``: inline them (offline, larger)."""
+    mode = os.environ.get("PHYSICS_HTML_FONTS", "cdn").strip().lower()
+    return mode if mode in {"cdn", "embed"} else "cdn"
+
+
+def slim_html(text: str, font_mode: str | None = None) -> str:
+    """Shrink a Quarto single-file HTML without changing what the reader sees.
+
+    * ``<link rel="prev|next" href="data:text/html,...">``: pandoc's embed-resources
+      inlines whole neighbouring chapter pages here (megabytes per chapter). Dropped.
+    * ``<link href="data:text/css,...">`` (Bootstrap theme): URL-encoded CSS triples in
+      size. Decoded into a ``<style>`` block; in ``cdn`` mode its embedded theme web
+      fonts are removed (textbook.css sets the body and heading fonts).
+    * ``cdn`` mode adds one Google Fonts stylesheet link for Source Sans 3 / Barlow Condensed.
+    """
+    mode = font_mode or html_font_mode()
+
+    def replace(match: re.Match[str]) -> str:
+        tag = match.group(0)
+        href = re.search(r'href="([^"]*)"', tag)
+        if not href:
+            return tag
+        url = href.group(1)
+        if url.startswith("data:text/html"):
+            return ""
+        if url.startswith("data:text/css,"):
+            css = urllib.parse.unquote(url[len("data:text/css,"):])
+            if mode == "cdn":
+                css = _FONT_FACE.sub(lambda m: "" if "data:" in m.group(0) else m.group(0), css)
+            ident = re.search(r'\bid="([^"]*)"', tag)
+            attr = f' id="{ident.group(1)}"' if ident else ""
+            css = css.replace("</style", "<\\/style")
+            return f"<style{attr}>{css}</style>"
+        return tag
+
+    text = _LINK_TAG.sub(replace, text)
+    if mode == "cdn" and GOOGLE_FONTS_CSS not in text:
+        link = (
+            '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+            f'<link rel="stylesheet" href="{GOOGLE_FONTS_CSS.replace("&", "&amp;")}">'
+        )
+        text = re.sub(r"(<head\b[^>]*>)", lambda m: m.group(1) + link, text, count=1, flags=re.IGNORECASE)
+    return text
+
+
+def render_formats(project: Path, formats: list[str], timeout: int, on_output=None) -> dict[str, str]:
+    """Render ``formats`` into ``project/_output`` and return format -> filename.
+
+    ``on_output(fmt, path)`` is called as soon as each requested format is written, so
+    the worker can publish PDF/DOCX while HTML/EPUB/flipbook are still rendering.
+    """
     quarto = _quarto_binary()
     env = render_env()
     output = project / "_output"
@@ -254,6 +314,7 @@ def render_formats(project: Path, formats: list[str], timeout: int) -> dict[str,
         if fmt == "HTML":
             destination.write_text(combine_book_html(project / "_render"), encoding="utf-8")
             embed_local_assets(destination)
+            destination.write_text(slim_html(destination.read_text(encoding="utf-8")), encoding="utf-8")
         else:
             source = _collect(project, suffix, FILENAMES[fmt])
             shutil.copy2(source, destination)
@@ -261,6 +322,8 @@ def render_formats(project: Path, formats: list[str], timeout: int) -> dict[str,
             pdf_path = destination
         if fmt in formats:
             produced[fmt] = destination.name
+            if on_output is not None:
+                on_output(fmt, destination)
 
     if "FLIPBOOK" in formats:
         if pdf_path is None or not pdf_path.is_file():
@@ -270,6 +333,8 @@ def render_formats(project: Path, formats: list[str], timeout: int) -> dict[str,
         destination = output / FILENAMES["FLIPBOOK"]
         write_flipbook(pdf_path, destination, title=title, lang=lang, timeout=timeout)
         produced["FLIPBOOK"] = destination.name
+        if on_output is not None:
+            on_output("FLIPBOOK", destination)
     return produced
 
 

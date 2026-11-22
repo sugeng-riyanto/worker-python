@@ -104,7 +104,15 @@
 )
 
 #set text(font: T.body-font, size: T.body-size, fill: T.ink, lang: bc-lang.slice(0, 2), hyphenate: true)
-#set par(leading: 0.62em, spacing: 0.95em, justify: false)
+// v14.2: body paragraphs are justified and hyphenated; headings, captions,
+// tables, lists, sidebar notes and centred boxes stay ragged (set below).
+#set par(leading: 0.62em, spacing: 0.95em, justify: true)
+#show heading: set par(justify: false)
+#show list: set par(justify: false)
+#show enum: set par(justify: false)
+#show terms: set par(justify: false)
+#show table: set par(justify: false)
+#show figure.caption: set par(justify: false)
 #show strong: set text(fill: T.navy)
 #show math.equation: set text(font: ("New Computer Modern Math",))
 #set list(marker: (text(fill: T.primary, size: 1.15em, baseline: -0.05em)[•], text(fill: T.primary)[–]), indent: 0.2em, body-indent: 0.55em)
@@ -260,6 +268,19 @@
   practical: (fill: T.purple-soft, stroke: (left: 3pt + T.purple), head: T.purple, tab: none),
   note: (fill: T.grey-soft, stroke: (left: 3pt + T.grey), head: T.grey, tab: none),
   "figure-brief": (fill: T.surface, stroke: (paint: T.grey, thickness: 0.8pt, dash: "dashed"), head: T.grey, tab: none),
+  // v14.2 problem-solving scaffolds
+  guess: (fill: T.blue-softer, stroke: (left: 3pt + T.navy), head: T.navy, tab: none, chip: "GUESS"),
+  ideal: (fill: T.purple-soft, stroke: (left: 3pt + T.purple), head: T.purple, tab: none, chip: "IDEAL"),
+  cer: (fill: T.blue-softer, stroke: (left: 3pt + T.blue), head: T.blue, tab: none, chip: "CER"),
+  "think-pair-share": (fill: T.green-soft, stroke: (left: 3pt + T.green), head: T.green, tab: none, chip: "TPS"),
+  "concept-map": (fill: T.purple-soft, stroke: (left: 3pt + T.purple), head: T.purple, tab: none, chip: none),
+  "estimate-check": (fill: T.primary-soft, stroke: (left: 3pt + T.primary), head: T.primary-text, tab: none, chip: none),
+  "free-body": (fill: T.blue-softer, stroke: (left: 3pt + T.navy), head: T.navy, tab: none, chip: "FBD"),
+  "data-analysis": (fill: T.blue-softer, stroke: (left: 3pt + T.blue), head: T.blue, tab: none, chip: none),
+  "error-analysis": (fill: T.red-soft, stroke: (left: 3pt + T.red), head: T.red, tab: none, chip: none),
+  "real-world": (fill: T.primary-soft, stroke: (left: 3pt + T.primary), head: T.primary-text, tab: none, chip: none),
+  poe: (fill: T.green-soft, stroke: (left: 3pt + T.green), head: T.green, tab: none, chip: "POE"),
+  "teacher-verification": (fill: T.grey-soft, stroke: (paint: T.grey, thickness: 0.8pt, dash: "dashed"), head: T.grey, tab: none, chip: none),
 )
 
 #let bc-box(kind: "note", title: none, wide: false, body) = {
@@ -283,15 +304,28 @@
   } else if kind == "definition" or kind == "key-equation" {
     bc-lift(dx: 0.8mm, dy: 1mm, block(width: 100%, fill: s.fill, radius: bc-radius, stroke: 0.6pt + T.navy.transparentize(70%), inset: (x: 5mm, y: 3mm), breakable: false)[
       #set align(center)
+      #set par(justify: false)
       #set text(weight: "semibold")
       #if title != none { text(font: T.head-font, stretch: T.head-stretch, weight: "bold", fill: s.head, size: 10pt)[#upper(title)]; parbreak() }
       #body
     ])
   } else {
-    block(width: 100%, fill: s.fill, stroke: s.stroke, radius: bc-radius, inset: (x: 4mm, y: 3mm), above: 1.2em, below: 1.2em, breakable: true)[
-      #if title != none { text(font: T.head-font, stretch: T.head-stretch, weight: "bold", size: 11pt, fill: s.head)[#title]; v(0.15em) }
+    let chip = s.at("chip", default: none)
+    // Checklists already start with a ☐: no bullet in front of it.
+    let body = if kind == "teacher-verification" { set list(marker: [], body-indent: 0pt); body } else { body }
+    layout(size => {
+    let tall = measure(block(width: size.width - 8mm, body)).height > 110mm
+    block(width: 100%, fill: s.fill, stroke: s.stroke, radius: bc-radius, inset: (x: 4mm, y: 3mm), above: 1.2em, below: 1.2em, breakable: tall)[
+      #if title != none {
+        if chip != none {
+          box(fill: s.head, radius: 3pt, inset: (x: 1.6mm, y: 0.7mm), baseline: 0.6mm, text(font: T.head-font, stretch: T.head-stretch, weight: "bold", size: 14pt, fill: T.on-primary, tracking: 0.04em)[#chip])
+          h(0.5em)
+        }
+        text(font: T.head-font, stretch: T.head-stretch, weight: "bold", size: 11pt, fill: s.head)[#title]; v(0.15em)
+      }
       #body
     ]
+    })
   }
   if wide { marginalia.wideblock(side: "outer", content) } else { content }
 }
@@ -311,6 +345,7 @@
   let s = bc-aside-styles.at(kind, default: bc-aside-styles.info)
   marginalia.note(counter: none, shift: "avoid", text-style: (size: 8.2pt), par-style: (spacing: 0.7em, leading: 0.5em),
     block(width: 100%, fill: s.fill, stroke: (top: 2pt + s.color), inset: (x: 2.2mm, y: 2.2mm), radius: (bottom-left: 6pt, bottom-right: 6pt, top-right: 2pt, top-left: 2pt))[
+      #set par(justify: false)
       #set list(marker: text(fill: s.color)[•], indent: 0pt, body-indent: 0.4em)
       #set enum(numbering: "1", indent: 0pt, body-indent: 0.4em)
       #if title != none { align(right, text(font: T.head-font, stretch: T.head-stretch, weight: "bold", size: 9.5pt, fill: s.color)[#upper(title)]); v(-0.3em) }
@@ -327,6 +362,86 @@
     let ch = counter(heading).get().first()
     str(ch) + "." + str(c.get().first())
   }
+}
+
+// ---------- v14.2: image placeholders and graph paper ----------
+// Rounded, dashed frame that reserves space for a picture; the figure brief sits
+// inside, the caption is a real (numbered) Quarto figure caption.
+#let bc-figure-frame(height: 45mm, hint: "Image placeholder", caption: none, body) = figure(
+  kind: "quarto-float-fig",
+  supplement: bc-label("Gambar", "Figure"),
+  caption: if caption == none { none } else { figure.caption(position: bottom, caption) },
+  block(width: 100%, height: height, radius: bc-radius, fill: T.grey-soft,
+    stroke: (paint: T.grey, thickness: 0.9pt, dash: "dashed"), inset: (x: 5mm, y: 3.5mm), clip: true)[
+    #set par(justify: false)
+    #set align(left)
+    #text(font: T.head-font, stretch: T.head-stretch, weight: "bold", size: 9pt, fill: T.grey, tracking: 0.06em)[#upper(hint)]
+    #v(0.2em)
+    #text(size: 8.6pt, style: "italic", fill: T.ink)[#body]
+  ],
+)
+
+// Graph paper: minor gridlines every `minor`, major every `major` (1 mm / 1 cm by
+// default), axes on the left and bottom, optional tick values, plotted points
+// (×) and a best-fit line (fit: (gradient, intercept)) or joined points.
+#let bc-nice-step(raw) = {
+  if raw <= 0 { return 1 }
+  let k = calc.pow(10.0, calc.floor(calc.log(raw, base: 10)))
+  for m in (1, 2, 2.5, 5, 10) { if m * k >= raw - 1e-9 { return m * k } }
+  10 * k
+}
+#let bc-graph-paper(width: 110mm, height: 70mm, minor: 1mm, major: 10mm, x-label: [], y-label: [],
+    x-max: none, y-max: none, points: (), fit: none, join: false, caption: []) = {
+  let per = calc.max(1, calc.round(major / minor))
+  let nx = calc.floor(width / minor + 0.001)
+  let ny = calc.floor(height / minor + 0.001)
+  let mx = calc.floor(nx / per)
+  let my = calc.floor(ny / per)
+  // Axis value per major square: a "nice" step so x-max/y-max fit and ticks read 0, 0.5, 1 ...
+  let sx = if x-max == none { none } else { bc-nice-step(x-max / calc.max(mx, 1)) }
+  let sy = if y-max == none { none } else { bc-nice-step(y-max / calc.max(my, 1)) }
+  let minor-stroke = 0.18pt + T.blue.transparentize(72%)
+  let major-stroke = 0.5pt + T.blue.transparentize(25%)
+  let px(x) = x / sx * major
+  let py(y) = height - y / sy * major
+  let tick(v) = text(size: 6.8pt, fill: T.ink)[#calc.round(v, digits: 2)]
+  let paper = box(width: width, height: height, fill: T.surface, {
+    for i in range(nx + 1) { if calc.rem(i, per) != 0 { place(top + left, line(start: (i * minor, 0pt), end: (i * minor, height), stroke: minor-stroke)) } }
+    for j in range(ny + 1) { if calc.rem(j, per) != 0 { place(top + left, line(start: (0pt, height - j * minor), end: (width, height - j * minor), stroke: minor-stroke)) } }
+    for i in range(mx + 1) { place(top + left, line(start: (i * major, 0pt), end: (i * major, height), stroke: major-stroke)) }
+    for j in range(my + 1) { place(top + left, line(start: (0pt, height - j * major), end: (width, height - j * major), stroke: major-stroke)) }
+    place(top + left, line(start: (0pt, height), end: (width, height), stroke: 0.9pt + T.ink))
+    place(top + left, line(start: (0pt, 0pt), end: (0pt, height), stroke: 0.9pt + T.ink))
+    if sx != none { for i in range(mx + 1) { place(top + left, dx: i * major - 4mm, dy: height + 1.2mm, box(width: 8mm, align(center, tick(i * sx)))) } }
+    if sy != none { for j in range(my + 1) { place(top + left, dx: -9mm, dy: height - j * major - 1.4mm, box(width: 8mm, align(right, tick(j * sy)))) } }
+    // y-axis label, reading upwards, left of the tick values
+    place(top + left, dx: -13mm, dy: height, rotate(-90deg, origin: top + left, reflow: false,
+      box(width: height, align(center, text(size: 8pt, weight: "semibold", fill: T.ink, y-label)))))
+    if sx != none and sy != none {
+      if fit != none {
+        let (m, c) = fit
+        let xe = calc.min(mx * sx, if m > 0 { (my * sy - c) / m } else { mx * sx })
+        place(top + left, line(start: (px(0), py(c)), end: (px(xe), py(m * xe + c)), stroke: 0.9pt + T.accent))
+      } else if join and points.len() > 1 {
+        for k in range(points.len() - 1) {
+          let (a, b) = (points.at(k), points.at(k + 1))
+          place(top + left, line(start: (px(a.at(0)), py(a.at(1))), end: (px(b.at(0)), py(b.at(1))), stroke: 0.9pt + T.accent))
+        }
+      }
+      for p in points {
+        let (x, y) = (px(p.at(0)), py(p.at(1)))
+        place(top + left, line(start: (x - 1mm, y - 1mm), end: (x + 1mm, y + 1mm), stroke: 0.9pt + T.navy))
+        place(top + left, line(start: (x - 1mm, y + 1mm), end: (x + 1mm, y - 1mm), stroke: 0.9pt + T.navy))
+      }
+    }
+  })
+  figure(kind: "bc-graph", supplement: bc-label("Grafik", "Graph"),
+    caption: if caption == [] { none } else { figure.caption(position: bottom, caption) },
+    block(breakable: false, radius: bc-radius, stroke: 0.6pt + T.blue-soft, inset: (left: 15mm, right: 4mm, top: 4mm, bottom: 3mm), fill: T.surface,
+      grid(columns: (auto,), row-gutter: 6mm,
+        paper,
+        align(center, text(size: 8pt, weight: "semibold", fill: T.ink, x-label)),
+      )))
 }
 
 #let bc-write-lines(n) = for _ in range(n) { v(5mm); line(length: 100%, stroke: 0.4pt + T.grey) }

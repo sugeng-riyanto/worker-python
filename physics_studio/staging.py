@@ -23,10 +23,14 @@ from physics_studio.safety import (
 
 ASSETS = Path(__file__).resolve().parent / "assets"
 
-STAGED_ASSETS = ("typst-show.typ", "textbook.lua", "gold-boxes.lua", "gold-boxes.css", "textbook.css")
+STAGED_ASSETS = ("typst-show.typ", "textbook.lua", "textbook-extras.lua", "gold-boxes.lua", "gold-boxes.css", "textbook.css")
 DEFAULT_FONT_DIR = Path("/usr/local/share/fonts/textbook")
 FONT_LINK = "_fonts"
 FONT_CSS = "textbook-fonts.css"
+# EPUB readers draw MathML with the reader's own fonts; many have no glyphs for
+# math italic Greek (U+1D6FC...). Embed an OFL math font so pi, theta, lambda show.
+MATH_FONT = "NotoSansMath-Regular.ttf"
+EPUB_MATH_CSS = "epub-math.css"
 PALETTE_CSS = "textbook-palette.css"
 # (file, family, weight, style) embedded into the single-file HTML.
 _WEB_FONTS = (
@@ -205,7 +209,9 @@ def _stage_open(archive: ZipFile, work: Path, limits: Limits) -> StagedBook:
 
     css_files.insert(2, PALETTE_CSS)
     html_css = list(css_files)
-    if _link_fonts(work) and _write_font_css(work):
+    # Fonts: the Typst PDF always uses the local files. The HTML links Google Fonts
+    # (render.slim_html) unless PHYSICS_HTML_FONTS=embed asks for inlined fonts.
+    if _link_fonts(work) and os.environ.get("PHYSICS_HTML_FONTS", "cdn").strip().lower() == "embed" and _write_font_css(work):
         html_css.insert(0, FONT_CSS)
     _write_project_yaml(work, metadata, [name for name, _ in chapters], css_files, html_css)
     return StagedBook(
@@ -235,7 +241,16 @@ def _write_project_yaml(
     if metadata.cover_image:
         book["cover-image"] = metadata.cover_image
 
-    epub: dict = {"toc": True, "css": list(css_files)}
+    # MathML: e-readers render it natively (no script); DOCX uses Word equations (OMML).
+    epub: dict = {"toc": True, "css": list(css_files), "html-math-method": "mathml"}
+    if (work / FONT_LINK / MATH_FONT).is_file():
+        (work / EPUB_MATH_CSS).write_text(
+            '@font-face { font-family: "Noto Sans Math"; src: url("../fonts/' + MATH_FONT + '"); }\n'
+            'math { font-family: "Noto Sans Math", "STIX Two Math", "Cambria Math", math; }\n',
+            encoding="utf-8",
+        )
+        epub["css"].append(EPUB_MATH_CSS)
+        epub["epub-fonts"] = [f"{FONT_LINK}/{MATH_FONT}"]
     if metadata.cover_image:
         epub["cover-image"] = metadata.cover_image
     if metadata.description:
@@ -268,7 +283,7 @@ def _write_project_yaml(
         "crossref": {"chapters": True},
         "bc-theme": _theme_name(metadata),
         "bc-palette": _palette_name(metadata),
-        "filters": ["textbook.lua", "gold-boxes.lua"],
+        "filters": ["textbook.lua", "textbook-extras.lua", "gold-boxes.lua"],
         "format": {
             "typst": typst,
             "docx": {"reference-doc": "b5-reference.docx", "toc": True},
