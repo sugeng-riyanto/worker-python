@@ -1,0 +1,229 @@
+/* Bahasa Cerdas textbook look for HTML and EPUB (mirrors typst-show.typ, theme "studio"). */
+:root {
+  --bc-primary: #f47415;
+  --bc-primary-dark: #c85f05;
+  --bc-primary-soft: #fde3cc;
+  --bc-accent: #d5164f;
+  --bc-navy: #1b4f8a;
+  --bc-blue: #0089c0;
+  --bc-blue-soft: #e1f1fa;
+  --bc-blue-softer: #f1f8fc;
+  --bc-green: #3e9b46;
+  --bc-green-soft: #e5f3e3;
+  --bc-purple: #7a4fa0;
+  --bc-purple-soft: #efe6f6;
+  --bc-red: #d62828;
+  --bc-red-soft: #fce7e6;
+  --bc-grey: #6b7280;
+  --bc-grey-soft: #f2f2f2;
+  --bc-ink: #1f2328;
+  --bc-body: "Source Sans 3", "Source Sans Pro", "Segoe UI", Roboto, Arial, sans-serif;
+  --bc-head: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", "Source Sans 3", sans-serif;
+}
+
+body {
+  font-family: var(--bc-body);
+  color: var(--bc-ink);
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+main.content { counter-reset: bc-example bc-practice; }
+
+strong { color: var(--bc-navy); }
+
+h1, h2, h3, h4, h5, .title, .chapter-title {
+  font-family: var(--bc-head);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
+/* Chapter opener band */
+#title-block-header .title,
+main h1.title {
+  background: var(--bc-primary);
+  color: #fff;
+  padding: 1.4rem 1.4rem 1.2rem;
+  border-radius: 0 0 2.2rem 0;
+  font-size: 2.1rem;
+  line-height: 1.15;
+  margin: 0 0 1.4rem;
+}
+main h1.title .chapter-number {
+  display: block;
+  font-size: 3.4rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 0.2rem;
+}
+main h1.title .chapter-number::before {
+  content: "BAB";
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+:lang(en) main h1.title .chapter-number::before { content: "CHAPTER"; }
+
+/* Numbered section banner */
+main h2 {
+  background: var(--bc-primary);
+  color: #fff;
+  padding: 0.45rem 0.9rem;
+  border-radius: 0.6rem 0.6rem 0.6rem 0;
+  font-size: 1.6rem;
+  margin: 2.2rem 0 1rem;
+  border: 0;
+}
+main h2.unnumbered,
+main section.unnumbered > h2 { background: var(--bc-navy); border-radius: 0.6rem; }
+main h2 .header-section-number { margin-right: 0.45rem; }
+main h2, main h3 { clear: both; }
+main h3 .header-section-number, main h4 .header-section-number { display: none; }
+main .quarto-title-meta { margin-top: 0.4rem; }
+main h3 { font-size: 1.45rem; color: var(--bc-ink); margin-top: 1.6rem; }
+main h4 { font-size: 1.15rem; color: var(--bc-primary); }
+main h5 { font-size: 1rem; color: var(--bc-navy); font-family: var(--bc-body); }
+
+ul li::marker { color: var(--bc-primary); }
+ol li::marker { color: var(--bc-navy); font-weight: 700; }
+
+/* Tables: blue header, banded rows */
+main table {
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 0.45rem;
+  overflow: hidden;
+  font-size: 0.92rem;
+  margin: 1rem 0 1.2rem;
+}
+main table thead th, main table thead td {
+  background: var(--bc-blue) !important;
+  color: #fff !important;
+  font-weight: 700;
+  border: 0 !important;
+}
+main table tbody tr:nth-child(odd) td { background: var(--bc-blue-soft); }
+main table tbody tr:nth-child(even) td { background: var(--bc-blue-softer); }
+main table td, main table th { border: 0; border-right: 1px solid #fff; padding: 0.4rem 0.6rem; }
+caption, .figure-caption, figcaption {
+  font-style: italic;
+  font-size: 0.88rem;
+  color: var(--bc-ink);
+  caption-side: top;
+}
+figcaption strong, caption strong { font-style: italic; }
+
+blockquote {
+  background: var(--bc-blue-softer);
+  border-left: 3px solid var(--bc-blue);
+  padding: 0.6rem 0.9rem;
+  color: var(--bc-ink);
+}
+
+/* Main-column learning boxes */
+.bc-box {
+  position: relative;
+  margin: 1.3rem 0 1.4rem;
+  padding: 0.8rem 1rem 0.9rem;
+  border-radius: 0.5rem;
+  page-break-inside: avoid;
+}
+.bc-box > p:last-child { margin-bottom: 0; }
+.bc-box .box-label, .bc-aside .box-label {
+  display: block;
+  font-family: var(--bc-head);
+  font-weight: 700;
+  margin: 0 0 0.45rem;
+}
+.bc-box .box-label strong, .bc-aside .box-label strong { color: inherit; }
+
+.worked-example, .givens, .practice, .review, .summary {
+  background: #fff;
+  border: 1.5px solid var(--bc-accent);
+  padding-top: 0;
+}
+.worked-example > p:first-child .box-label,
+.givens > p:first-child .box-label,
+.practice > p:first-child .box-label,
+.review > p:first-child .box-label,
+.summary > p:first-child .box-label {
+  display: inline-block;
+  color: #fff;
+  background: var(--bc-accent);
+  margin: 0 0 0.5rem -1rem;
+  padding: 0.35rem 1rem;
+  border-radius: 0.45rem 0 0.6rem 0;
+  font-size: 1.2rem;
+}
+.practice { border-color: var(--bc-navy); }
+.practice > p:first-child .box-label { background: var(--bc-navy); }
+.review { border-color: var(--bc-blue); }
+.review > p:first-child .box-label { background: var(--bc-primary); }
+.summary { border-color: var(--bc-blue); background: var(--bc-blue-softer); }
+.summary > p:first-child .box-label { background: var(--bc-blue); }
+
+.bc-numbered-example:not(.bc-explicit-title) { counter-increment: bc-example; }
+.bc-numbered-example:not(.bc-explicit-title) > p:first-child .box-label::after { content: " " counter(bc-example); }
+.bc-numbered-practice:not(.bc-explicit-title) { counter-increment: bc-practice; }
+.bc-numbered-practice:not(.bc-explicit-title) > p:first-child .box-label::after { content: " " counter(bc-practice); }
+
+.objectives {
+  background: var(--bc-primary-soft);
+  border-radius: 0 0 0.6rem 0.6rem;
+  margin-top: -0.6rem;
+}
+.objectives .box-label { font-family: var(--bc-body); font-size: 1.02rem; color: var(--bc-ink); }
+
+.definition, .key-equation {
+  background: var(--bc-blue-soft);
+  border-radius: 0;
+  text-align: center;
+  font-weight: 600;
+}
+.workspace, .think { background: var(--bc-green-soft); border-left: 4px solid var(--bc-green); }
+.workspace .box-label, .think .box-label { color: var(--bc-green); }
+.exam-trap { background: var(--bc-red-soft); border-left: 4px solid var(--bc-red); }
+.exam-trap .box-label { color: var(--bc-red); }
+.hook { background: var(--bc-blue-softer); border-left: 4px solid var(--bc-primary); }
+.hook .box-label { color: var(--bc-primary-dark); }
+.practical { background: var(--bc-purple-soft); border-left: 4px solid var(--bc-purple); }
+.practical .box-label { color: var(--bc-purple); }
+.note { background: var(--bc-grey-soft); border-left: 4px solid var(--bc-grey); }
+.figure-brief { background: #fff; border: 1.5px dashed var(--bc-grey); color: var(--bc-grey); font-style: italic; }
+.figure-brief .box-label { color: var(--bc-grey); font-style: normal; }
+
+/* Sidebar notes float to the outer side on wide screens */
+.bc-aside {
+  float: right;
+  clear: right;
+  width: 15rem;
+  max-width: 42%;
+  margin: 0.2rem 0 1rem 1.4rem;
+  padding: 0.55rem 0.7rem 0.6rem;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  border-top: 3px solid var(--bc-grey);
+  border-radius: 0 0 0.4rem 0.4rem;
+  background: var(--bc-grey-soft);
+}
+.bc-aside .box-label { text-align: right; text-transform: uppercase; font-size: 0.95rem; }
+.bc-aside > p:last-child { margin-bottom: 0; }
+.bc-aside.quick-check { border-color: var(--bc-green); background: var(--bc-green-soft); }
+.bc-aside.quick-check .box-label { color: var(--bc-green); }
+.bc-aside.remember { border-color: var(--bc-primary); background: var(--bc-primary-soft); }
+.bc-aside.remember .box-label { color: var(--bc-primary-dark); }
+.bc-aside.key-terms, .bc-aside.qr { border-color: var(--bc-navy); background: var(--bc-blue-soft); }
+.bc-aside.key-terms .box-label, .bc-aside.qr .box-label { color: var(--bc-navy); }
+.bc-aside.enrichment { border-color: var(--bc-purple); background: var(--bc-purple-soft); }
+.bc-aside.enrichment .box-label { color: var(--bc-purple); }
+.bc-aside.info { border-color: var(--bc-blue); background: var(--bc-blue-softer); }
+.bc-aside.info .box-label { color: var(--bc-blue); }
+.bc-aside.link { border-color: var(--bc-accent); background: var(--bc-red-soft); }
+.bc-aside.link .box-label { color: var(--bc-accent); }
+
+@media (max-width: 720px) {
+  .bc-aside { float: none; width: auto; max-width: none; margin: 1rem 0; }
+  main h2 { font-size: 1.35rem; }
+  #title-block-header .title, main h1.title { font-size: 1.7rem; }
+}

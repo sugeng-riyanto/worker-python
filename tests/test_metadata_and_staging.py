@@ -1,3 +1,5 @@
+import os
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -48,6 +50,11 @@ format:
         self.assertEqual(meta.title, "Physics Textbook Studio")
         self.assertEqual(meta.author, "Academic Physics Publishing Team")
         self.assertEqual(meta.lang, "id")
+
+    def test_theme_is_limited_to_known_names(self):
+        self.assertEqual(parse_quarto_yaml("bc-theme: classic\n").theme, "classic")
+        self.assertEqual(parse_quarto_yaml("book:\n  theme: STUDIO\n").theme, "studio")
+        self.assertEqual(parse_quarto_yaml("bc-theme: '#evil'\n").theme, "")
 
     def test_invalid_yaml_is_rejected(self):
         with self.assertRaises(MetadataError):
@@ -118,6 +125,64 @@ class StagingTests(unittest.TestCase):
             self.stage({"bab-01.qmd": "```{=typst}\n#circle()\n```\n"})
         with self.assertRaises(StagingError):
             self.stage({"bab-01.qmd": "---\ntitle: Hidden\n---\n\n# A\n"})
+
+
+class TextbookStagingTests(unittest.TestCase):
+    def stage(self, files: dict, env: dict | None = None) -> Path:
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        work = Path(directory.name) / "work"
+        saved = {key: os.environ.get(key) for key in ("PHYSICS_FONT_DIR", "PHYSICS_THEME")}
+        try:
+            for key in saved:
+                os.environ.pop(key, None)
+            os.environ.update(env or {})
+            stage_zip(zip_bytes(files), work)
+        finally:
+            for key, value in saved.items():
+                if value is None:
+                    os.environ.pop(key, None)
+                else:
+                    os.environ[key] = value
+        return work
+
+    def test_textbook_filters_run_before_the_box_filter(self):
+        work = self.stage({"bab-01.qmd": "# Gerak\n\nTeks.\n"}, {"PHYSICS_FONT_DIR": "/nonexistent"})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertEqual(config["filters"], ["textbook.lua", "gold-boxes.lua"])
+        self.assertEqual(config["bc-theme"], "studio")
+        self.assertTrue(config["crossref"]["chapters"])
+        self.assertIn("textbook.css", config["format"]["html"]["css"])
+        self.assertIn("textbook.css", config["format"]["epub"]["css"])
+        self.assertNotIn("font-paths", config["format"]["typst"])
+        for name in ("textbook.lua", "gold-boxes.lua", "typst-show.typ", "textbook.css"):
+            self.assertTrue((work / name).is_file(), name)
+
+    def test_theme_from_yaml_and_worker_default(self):
+        work = self.stage({"bab-01.qmd": "# A\n", "_quarto.yml": "bc-theme: classic\n"})
+        self.assertEqual(yaml.safe_load((work / "_quarto.yml").read_text())["bc-theme"], "classic")
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_THEME": "classic"})
+        self.assertEqual(yaml.safe_load((work / "_quarto.yml").read_text())["bc-theme"], "classic")
+
+    def test_font_dir_is_linked_for_typst_and_embedded_for_html(self):
+        fonts = tempfile.TemporaryDirectory()
+        self.addCleanup(fonts.cleanup)
+        (Path(fonts.name) / "SourceSans3-Regular.woff2").write_bytes(b"wOF2")
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertEqual(config["format"]["typst"]["font-paths"], ["_fonts"])
+        self.assertTrue((work / "_fonts").is_symlink())
+        self.assertEqual(config["format"]["html"]["css"][0], "textbook-fonts.css")
+        css = (work / "textbook-fonts.css").read_text(encoding="utf-8")
+        self.assertIn('url("_fonts/SourceSans3-Regular.woff2") format("woff2")', css)
+        self.assertNotIn("textbook-fonts.css", config["format"]["epub"]["css"])
+
+    def test_typst_template_has_no_unescaped_pandoc_dollars(self):
+        from physics_studio.staging import ASSETS
+
+        text = (ASSETS / "typst-show.typ").read_text(encoding="utf-8")
+        stripped = re.sub(r"\$\$|\$(?:if|endif|else|for|endfor|sep)\b[^$]*\$|\$[a-z.-]+\$", "", text)
+        self.assertNotIn("$", stripped)
 
 
 if __name__ == "__main__":

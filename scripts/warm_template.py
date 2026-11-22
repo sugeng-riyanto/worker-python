@@ -1,4 +1,4 @@
-"""Compile the Typst template once so the image caches orange-book."""
+"""Compile the Typst template once so a broken template fails the image build."""
 
 from __future__ import annotations
 
@@ -15,7 +15,12 @@ def main() -> None:
     destination.mkdir(parents=True, exist_ok=True)
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w") as archive:
-        archive.writestr("bab-01.qmd", "# Warm\n\n::: {.givens}\nGiven a metre.\n:::\n")
+        archive.writestr(
+            "bab-01.qmd",
+            "# Warm\n\n## Section\n\n::: {.objectives}\n- One.\n:::\n\n"
+            "::: {.worked-example}\nGiven a metre.\n:::\n\n::: {.remember}\nUnits.\n:::\n\n"
+            "::: {.review}\n1. Q.\n:::\n",
+        )
     stage_zip(buffer.getvalue(), destination)
 
 

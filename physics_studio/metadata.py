@@ -24,6 +24,7 @@ class BookMetadata:
     rights: str = ""
     identifier: str = ""
     css_files: list[str] = field(default_factory=list)
+    theme: str = ""
 
     def as_yaml_document(self) -> dict:
         """Metadata fragment stored back into a generated archive."""
@@ -33,6 +34,8 @@ class BookMetadata:
         if self.cover_image:
             book["cover-image"] = self.cover_image
         document: dict = {"book": book, "lang": self.lang}
+        if self.theme:
+            document["bc-theme"] = self.theme
         epub: dict = {}
         if self.date:
             epub["date"] = self.date
@@ -98,6 +101,14 @@ def _lang(value: object) -> str:
     return ""
 
 
+THEMES = ("studio", "classic")
+
+
+def _theme(value: object) -> str:
+    text = _clean(value, 20).lower()
+    return text if text in THEMES else ""
+
+
 def parse_quarto_yaml(text: str) -> BookMetadata:
     """Honor title, author, language, cover, and EPUB metadata. Ignore everything else."""
     if len(text.encode("utf-8")) > 32_000:
@@ -139,4 +150,5 @@ def parse_quarto_yaml(text: str) -> BookMetadata:
     meta.rights = _clean(rights, 500)
     identifier = epub.get("identifier") or epub.get("isbn") or ""
     meta.identifier = _clean(identifier, 80)
+    meta.theme = _theme(loaded.get("bc-theme") or book.get("theme") or book.get("bc-theme"))
     return meta

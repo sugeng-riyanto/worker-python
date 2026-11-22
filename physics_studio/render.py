@@ -156,18 +156,24 @@ def _html_sort_key(path: Path) -> tuple:
 
 
 def _main_fragment(text: str, anchor: str) -> str | None:
+    """Inner HTML of a chapter page's <main>, wrapped in a section with a stable id."""
     start = text.find("<main")
     end = text.find("</main>")
     if start < 0 or end < 0:
         return None
-    fragment = text[start : end + len("</main>")]
-    if not re.match(r"<main[^>]*\sid=", fragment):
-        fragment = fragment.replace("<main", f'<main id="{anchor}"', 1)
-    return fragment
+    open_end = text.find(">", start)
+    if open_end < 0 or open_end > end:
+        return None
+    inner = text[open_end + 1 : end]
+    return f'<section id="{anchor}" class="book-part">\n{inner}\n</section>'
 
 
 def combine_book_html(render_dir: Path) -> str:
-    """Quarto books emit one HTML file per chapter. Join them so one signed link works offline."""
+    """Quarto books emit one HTML file per chapter. Join them so one signed link works offline.
+
+    Every chapter goes inside the shell page's single <main>. Several <main>
+    elements share one grid cell in Quarto's layout and draw on top of each other.
+    """
     pages = sorted(
         (path for path in render_dir.glob("*.html") if path.is_file()),
         key=_html_sort_key,
@@ -188,10 +194,11 @@ def combine_book_html(render_dir: Path) -> str:
     shell = shell_path.read_text(encoding="utf-8", errors="replace")
     start = shell.find("<main")
     end = shell.find("</main>")
-    if start < 0 or end < 0:
+    open_end = shell.find(">", start) if start >= 0 else -1
+    if start < 0 or end < 0 or open_end < 0:
         combined = shell
     else:
-        combined = shell[:start] + "\n".join(fragments) + shell[end + len("</main>") :]
+        combined = shell[: open_end + 1] + "\n".join(fragments) + shell[end:]
 
     def retarget(match: re.Match[str]) -> str:
         target = match.group(1).split("#", 1)[0].split("?", 1)[0]
