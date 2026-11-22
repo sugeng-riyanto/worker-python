@@ -64,15 +64,24 @@ class App:
 
     def _execute(self, job_id: str, formats: list[str]) -> None:
         self.store.update(job_id, state="running")
-        try:
-            outputs = render_formats(self.store.src_dir(job_id), formats, self.config.render_timeout)
-            # Keep rendered files next to the status record the restart path reloads.
-            output_dir = self.store.output_dir(job_id)
+        output_dir = self.store.output_dir(job_id)
+        published: dict[str, str] = {}
+
+        def publish(fmt: str, path) -> None:
+            # v14.2: each format becomes downloadable as soon as it is written.
             output_dir.mkdir(parents=True, exist_ok=True)
+            (output_dir / path.name).write_bytes(path.read_bytes())
+            published[fmt] = path.name
+            self.store.update(job_id, outputs=dict(published), expires=time.time() + self.config.ttl_seconds)
+
+        try:
+            outputs = render_formats(self.store.src_dir(job_id), formats, self.config.render_timeout, on_output=publish)
             source_dir = self.store.src_dir(job_id) / "_output"
+            output_dir.mkdir(parents=True, exist_ok=True)
             for filename in outputs.values():
                 target = output_dir / filename
-                target.write_bytes((source_dir / filename).read_bytes())
+                if not target.is_file():
+                    target.write_bytes((source_dir / filename).read_bytes())
             self.store.update(
                 job_id,
                 state="done",
@@ -109,12 +118,16 @@ def _job_payload(app: App, job_id: str, job) -> dict:
     payload: dict = {"state": job.state}
     if job.error:
         payload["error"] = job.error
-    if job.state == "done":
+    if job.state in {"running", "done"} and job.outputs:
+        # Partial outputs while running (v14.2); the full set once done.
         outputs = {
             fmt: signed_path(app.config.token, job_id, filename, int(job.expires))
             for fmt, filename in job.outputs.items()
         }
         payload["outputs"] = outputs
+        payload["pending"] = [fmt for fmt in job.formats if fmt not in outputs]
+    if job.state == "done":
+        outputs = payload.get("outputs", {})
         if job.primary in outputs:
             payload["path"] = outputs[job.primary]
         elif outputs:
@@ -227,7 +240,7 @@ def make_handler(app: App):
             if expires < time.time():
                 return _json(self, 404, {"error": "Invalid or expired link"})
             job = app.store.get(job_id)
-            allowed = set(job.outputs.values()) if job and job.state == "done" else set()
+            allowed = set(job.outputs.values()) if job and job.state in {"running", "done"} else set()
             expected = signature(app.config.token, job_id, filename, expires)
             if (
                 job is None

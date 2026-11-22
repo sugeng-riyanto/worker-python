@@ -1,5 +1,6 @@
 import http.client
 import json
+import time
 import shutil
 import tempfile
 import threading
@@ -110,7 +111,7 @@ class WorkerHttpTests(unittest.TestCase):
     def test_all_mode_returns_every_format_and_surfaces_errors(self):
         import physics_studio.worker as worker
 
-        def fake(project, formats, timeout):
+        def fake(project, formats, timeout, on_output=None):
             out = project / "_output"
             out.mkdir(parents=True, exist_ok=True)
             produced = {}
@@ -141,7 +142,7 @@ class WorkerHttpTests(unittest.TestCase):
         status, _, _ = self.request("GET", "/healthz", token=None)
         self.assertEqual(status, 200)
 
-        def explode(project, formats, timeout):
+        def explode(project, formats, timeout, on_output=None):
             raise RenderError("typst: file not found: images/vernier.png")
 
         worker.render_formats = explode
@@ -156,10 +157,59 @@ class WorkerHttpTests(unittest.TestCase):
         self.assertEqual(error["state"], "failed")
         self.assertIn("vernier.png", error["error"])
 
+    def test_formats_are_downloadable_while_the_job_runs(self):
+        """v14.2: PDF can be saved while HTML/EPUB/flipbook are still rendering."""
+        import threading
+
+        import physics_studio.worker as worker
+
+        release = threading.Event()
+
+        def staged(project, formats, timeout, on_output=None):
+            out = project / "_output"
+            out.mkdir(parents=True, exist_ok=True)
+            produced = {}
+            for fmt in formats:
+                path = out / FILENAMES[fmt]
+                path.write_bytes(f"bytes-{fmt}".encode())
+                produced[fmt] = path.name
+                if on_output:
+                    on_output(fmt, path)
+                if fmt == "PDF":
+                    release.wait(5)
+            return produced
+
+        worker.render_formats = staged
+        status, body, _ = self.request("POST", "/jobs/ALL", zip_bytes({"bab-01.qmd": CHAPTER}))
+        self.assertEqual(status, 202, body)
+        job = json.loads(body)["job"]
+        state = {}
+        for _ in range(100):
+            _, body, _ = self.request("GET", f"/jobs/{job}")
+            state = json.loads(body)
+            if state.get("outputs"):
+                break
+            time.sleep(0.02)
+        self.assertEqual(state["state"], "running", state)
+        self.assertEqual(set(state["outputs"]), {"PDF"})
+        self.assertIn("HTML", state["pending"])
+        self.assertNotIn("path", state)
+        status, downloaded, _ = self.request("GET", state["outputs"]["PDF"], token=None)
+        self.assertEqual((status, downloaded), (200, b"bytes-PDF"))
+        release.set()
+        for _ in range(100):
+            _, body, _ = self.request("GET", f"/jobs/{job}")
+            state = json.loads(body)
+            if state["state"] == "done":
+                break
+            time.sleep(0.02)
+        self.assertEqual(set(state["outputs"]), {"PDF", "DOCX", "HTML", "EPUB", "FLIPBOOK"})
+        self.assertEqual(state["pending"], [])
+
     def test_auth_and_single_format_contract(self):
         import physics_studio.worker as worker
 
-        worker.render_formats = lambda project, formats, timeout: (_ for _ in ()).throw(AssertionError("no"))
+        worker.render_formats = lambda project, formats, timeout, on_output=None: (_ for _ in ()).throw(AssertionError("no"))
         status, _, _ = self.request("POST", "/jobs/PDF", zip_bytes({"bab-01.qmd": "# A\n"}), token="nope")
         self.assertEqual(status, 401)
         status, _, _ = self.request("POST", "/jobs/SLIDES", b"zip", token=TOKEN)
@@ -204,7 +254,7 @@ class WorkerHttpTests(unittest.TestCase):
         status, _, _ = self.request("POST", "/jobs/PDF", archive)
         self.assertEqual(status, 202)
 
-    def _write_pdf(self, project, formats, timeout):
+    def _write_pdf(self, project, formats, timeout, on_output=None):
         out = project / "_output"
         out.mkdir(parents=True, exist_ok=True)
         produced = {}
