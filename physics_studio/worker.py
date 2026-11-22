@@ -99,6 +99,8 @@ def _json(handler: BaseHTTPRequestHandler, status: int, payload: dict) -> None:
     handler.send_header("Content-Type", "application/json; charset=utf-8")
     handler.send_header("Cache-Control", "no-store")
     handler.send_header("Content-Length", str(len(body)))
+    if handler.close_connection:
+        handler.send_header("Connection", "close")
     handler.end_headers()
     handler.wfile.write(body)
 
@@ -135,26 +137,68 @@ def make_handler(app: App):
                 _json(self, 500, {"error": "Internal error"})
 
         def do_POST(self) -> None:  # noqa: N802
+            self._body_consumed = False
             try:
                 self._post()
             except Exception:
                 log.exception("POST failed")
+                self._discard_unread_body()
                 _json(self, 500, {"error": "Internal error"})
+
+        def _discard_unread_body(self) -> None:
+            """Align a keep-alive connection before an early error response.
+
+            A reverse proxy reuses the socket. If the declared body is still
+            sitting in it, the next request line is parsed from those bytes and
+            comes back 501. Bodies within the zip cap are discarded. Anything
+            larger, chunked, or unreadable closes the connection instead of
+            being buffered.
+            """
+            if self._body_consumed:
+                return
+            self._body_consumed = True
+            encoding = self.headers.get("Transfer-Encoding", "")
+            if encoding and encoding.lower() != "identity":
+                self.close_connection = True
+                return
+            raw_length = self.headers.get("Content-Length")
+            try:
+                size = int(raw_length) if raw_length not in (None, "") else 0
+            except ValueError:
+                self.close_connection = True
+                return
+            if size < 0 or size > app.config.max_zip_bytes:
+                self.close_connection = True
+                return
+            remaining = size
+            try:
+                while remaining:
+                    chunk = self.rfile.read(min(remaining, 65536))
+                    if not chunk:
+                        self.close_connection = True
+                        return
+                    remaining -= len(chunk)
+            except OSError:
+                self.close_connection = True
 
         def _post(self) -> None:
             path = urlsplit(self.path).path
             if not authorized(self.headers.get("Authorization", ""), app.config.token):
+                self._discard_unread_body()
                 return _json(self, 401, {"error": "Unauthorized"})
             match = _POST_PATH.fullmatch(path)
             if not match:
+                self._discard_unread_body()
                 return _json(self, 404, {"error": "Unknown format"})
             try:
                 size = int(self.headers.get("Content-Length", "0"))
             except ValueError:
                 size = 0
             if size <= 0 or size > app.config.max_zip_bytes:
+                self._discard_unread_body()
                 return _json(self, 413, {"error": "Invalid archive size"})
             raw = self.rfile.read(size)
+            self._body_consumed = True
             try:
                 job_id = app.submit(raw, match.group(1))
             except BusyError:

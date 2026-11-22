@@ -1,3 +1,4 @@
+import http.client
 import json
 import shutil
 import tempfile
@@ -166,6 +167,32 @@ class WorkerHttpTests(unittest.TestCase):
         status, body, _ = self.request("POST", "/jobs/PDF", zip_bytes({"bab-01.qmd": "```{=typst}\n#x\n```\n"}))
         self.assertEqual(status, 400)
         self.assertIn("Active source", json.loads(body)["error"])
+
+    def test_unauthorized_body_does_not_poison_keepalive(self):
+        import physics_studio.worker as worker
+
+        worker.render_formats = self._write_pdf
+        port = self.server.server_address[1]
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=5)
+        self.addCleanup(conn.close)
+        conn.request("POST", "/jobs/ALL", body=b"PK\x03\x04 leftover body")
+        rejected = conn.getresponse()
+        self.assertEqual(rejected.status, 401)
+        self.assertNotEqual(rejected.getheader("Connection"), "close")
+        rejected.read()
+        reused = conn.sock
+        archive = zip_bytes({"bab-01.qmd": "# Keepalive\n\nA unit.\n"})
+        conn.request(
+            "POST",
+            "/jobs/ALL",
+            body=archive,
+            headers={"Authorization": f"Bearer {TOKEN}"},
+        )
+        self.assertIs(conn.sock, reused)
+        accepted = conn.getresponse()
+        payload = accepted.read()
+        self.assertEqual(accepted.status, 202, payload)
+        self.assertIn("job", json.loads(payload))
 
     def test_finished_job_does_not_cause_429(self):
         import physics_studio.worker as worker
