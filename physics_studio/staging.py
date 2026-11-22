@@ -13,6 +13,7 @@ from zipfile import BadZipFile, ZipFile
 import yaml
 
 from physics_studio.metadata import THEMES, BookMetadata, MetadataError, parse_quarto_yaml
+from physics_studio.palettes import SCREEN_ONLY, css_vars, resolve, typst_dict
 from physics_studio.safety import (
     ASSET_SUFFIXES,
     asset_rejected,
@@ -26,6 +27,7 @@ STAGED_ASSETS = ("typst-show.typ", "textbook.lua", "gold-boxes.lua", "gold-boxes
 DEFAULT_FONT_DIR = Path("/usr/local/share/fonts/textbook")
 FONT_LINK = "_fonts"
 FONT_CSS = "textbook-fonts.css"
+PALETTE_CSS = "textbook-palette.css"
 # (file, family, weight, style) embedded into the single-file HTML.
 _WEB_FONTS = (
     ("SourceSans3-Regular.woff2", "Source Sans 3", 400, "normal"),
@@ -198,7 +200,10 @@ def _stage_open(archive: ZipFile, work: Path, limits: Limits) -> StagedBook:
 
     for asset_name in STAGED_ASSETS:
         shutil.copy2(ASSETS / asset_name, work / asset_name)
+    palette = _palette_name(metadata)
+    _apply_palette(work, palette)
 
+    css_files.insert(2, PALETTE_CSS)
     html_css = list(css_files)
     if _link_fonts(work) and _write_font_css(work):
         html_css.insert(0, FONT_CSS)
@@ -262,12 +267,13 @@ def _write_project_yaml(
         "toc": True,
         "crossref": {"chapters": True},
         "bc-theme": _theme_name(metadata),
+        "bc-palette": _palette_name(metadata),
         "filters": ["textbook.lua", "gold-boxes.lua"],
         "format": {
             "typst": typst,
             "docx": {"reference-doc": "b5-reference.docx", "toc": True},
             "html": {
-                "theme": "cosmo",
+                "theme": "darkly" if _palette_name(metadata) in SCREEN_ONLY else "cosmo",
                 "css": list(html_css or css_files),
                 "embed-resources": True,
                 "toc": True,
@@ -287,6 +293,29 @@ def _theme_name(metadata: BookMetadata) -> str:
         return metadata.theme
     fallback = os.environ.get("PHYSICS_THEME", "").strip().lower()
     return fallback if fallback in THEMES else "studio"
+
+
+def _palette_name(metadata: BookMetadata) -> str:
+    """Palette from the book (bc-palette / book.palette), else PHYSICS_PALETTE, else the theme's own."""
+    if metadata.palette:
+        return metadata.palette
+    fallback = os.environ.get("PHYSICS_PALETTE", "").strip().lower()
+    return resolve(fallback, _theme_name(metadata))
+
+
+_PALETTE_BLOCK = re.compile(r"// <bc-palette>.*?// </bc-palette>", re.DOTALL)
+
+
+def _apply_palette(work: Path, palette: str) -> None:
+    """Write the chosen palette into the staged Typst partial and the palette CSS."""
+    show = work / "typst-show.typ"
+    text = show.read_text(encoding="utf-8")
+    block = "// <bc-palette>\n" + typst_dict(palette) + "// </bc-palette>"
+    text, count = _PALETTE_BLOCK.subn(lambda _: block, text, count=1)
+    if count != 1:
+        raise StagingError("typst-show.typ is missing its palette block")
+    show.write_text(text, encoding="utf-8")
+    (work / PALETTE_CSS).write_text(css_vars(palette), encoding="utf-8")
 
 
 def font_dir() -> Path | None:

@@ -252,3 +252,10 @@ python -m physics_studio.generator \
 ```
 
 Drive uploads go to `Book A0/outputs/pdf/`, `docx/`, `html/`, `epub/`, and `flipbook/`.
+
+## Colour palettes
+
+`physics_studio/palettes.py` holds nine palettes: `studio` (default, MCE orange), `blue`, `classic` (OUP), `teal`, `forest`, `crimson`, `purple`, `amber`, and `dark` (screen-only; DOCX falls back to `studio`). Pick one with `bc-palette: teal` (or `book: {palette: teal}`) in the uploaded `_quarto.yml`, or set the worker-wide default with `PHYSICS_PALETTE`. When neither is set, the theme picks its own palette (`classic` → `classic`).
+
+Each palette sets roles (paper, ink, heading, primary, primary-text, on-primary, surface, the box fills and accents). `CONTRAST_RULES` lists every foreground/background pair the templates draw: 4.5:1 for normal text, and 3:1 for large text (14 pt bold or more) and borders. `tests/test_palettes.py` prints the full table (`python -m unittest -v tests.test_palettes`), and the Docker build runs it, so a palette that falls short fails the image build. At staging time the palette is written into the Typst partial (the `// <bc-palette>` block) and into `textbook-palette.css`, so PDF, HTML, EPUB, the flipbook, and DOCX all use the same colours.
+

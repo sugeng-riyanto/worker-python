@@ -126,3 +126,12 @@ OUTPUT FORMAT (Quarto Markdown, renders as an MCE-style student book):
   and "#### Bagian B: Uraian".
 - Use plain text, not inline code, for emphasis.
 ```
+
+
+## Palettes and depth (v14.1)
+
+- Nine palettes, all WCAG AA (see README "Colour palettes"): studio, blue, classic, teal, forest, crimson, purple, amber, dark.
+- The studio orange is slightly deeper (`#E5670C`) than MCE `#F47415`. White text on it reaches 3.35:1, which is enough for large text. Small orange text uses `primary-text` `#A84C08` (5.67:1).
+- Depth:
+  - PDF: 8 pt rounded corners on boxes, tables, and images; two offset shadow layers under the opener, section bands, and short boxes; gradient bands; an embossed chapter number and title (an offset darker copy plus a faint highlight); a gradient accent bar on H3; a translucent number chip in H2.
+  - HTML: `box-shadow`, gradients, and an embossed `text-shadow`; no shadows in print.

@@ -1,32 +1,52 @@
-/* Bahasa Cerdas textbook look for HTML and EPUB (mirrors typst-show.typ, theme "studio"). */
+/* Bahasa Cerdas textbook look for HTML and EPUB (mirrors typst-show.typ).
+   Colours are palette roles; textbook-palette.css (written at staging time from
+   physics_studio/palettes.py) overrides these studio defaults. Every role pair used
+   here is contrast-checked in tests/test_palettes.py. */
 :root {
-  --bc-primary: #f47415;
-  --bc-primary-dark: #c85f05;
-  --bc-primary-soft: #fde3cc;
-  --bc-accent: #d5164f;
-  --bc-navy: #1b4f8a;
-  --bc-blue: #0089c0;
-  --bc-blue-soft: #e1f1fa;
-  --bc-blue-softer: #f1f8fc;
-  --bc-green: #3e9b46;
-  --bc-green-soft: #e5f3e3;
-  --bc-purple: #7a4fa0;
-  --bc-purple-soft: #efe6f6;
-  --bc-red: #d62828;
-  --bc-red-soft: #fce7e6;
-  --bc-grey: #6b7280;
-  --bc-grey-soft: #f2f2f2;
-  --bc-ink: #1f2328;
+  --bc-paper: #FFFFFF;
+  --bc-ink: #1F2328;
+  --bc-heading: #1F2328;
+  --bc-muted: #5B6270;
+  --bc-surface: #FFFFFF;
+  --bc-primary: #E5670C;
+  --bc-primary-text: #A84C08;
+  --bc-primary-soft: #FDE6D2;
+  --bc-on-primary: #FFFFFF;
+  --bc-accent: #C8144A;
+  --bc-navy: #1B4F8A;
+  --bc-blue: #0072A3;
+  --bc-table-head: #006F9E;
+  --bc-blue-soft: #E1F1FA;
+  --bc-blue-softer: #F1F8FC;
+  --bc-green: #2E7533;
+  --bc-green-soft: #E5F3E3;
+  --bc-purple: #6E4594;
+  --bc-purple-soft: #EFE6F6;
+  --bc-red: #B91F1F;
+  --bc-red-soft: #FCE7E6;
+  --bc-grey: #5F6672;
+  --bc-grey-soft: #F1F2F4;
+  color-scheme: light;
   --bc-body: "Source Sans 3", "Source Sans Pro", "Segoe UI", Roboto, Arial, sans-serif;
   --bc-head: "Barlow Condensed", "Roboto Condensed", "Arial Narrow", "Source Sans 3", sans-serif;
+  --bc-radius: 10px;
+  /* gradients deepen toward this colour: black on light palettes, white on dark */
+  --bc-deep: #000;
+  --bc-shadow: 0 1px 2px rgba(15, 23, 42, 0.10), 0 6px 16px -6px rgba(15, 23, 42, 0.22);
+  --bc-shadow-lift: 0 2px 4px rgba(15, 23, 42, 0.12), 0 14px 28px -10px rgba(15, 23, 42, 0.30);
 }
 
 body {
   font-family: var(--bc-body);
   color: var(--bc-ink);
+  background: var(--bc-paper);
   font-size: 1.02rem;
   line-height: 1.55;
 }
+#quarto-content, #quarto-header, .sidebar, #quarto-sidebar, #TOC, .quarto-title-banner { background-color: var(--bc-paper); color: var(--bc-ink); }
+.sidebar a, #TOC a, .sidebar .sidebar-item-text { color: var(--bc-ink); }
+.sidebar a.active, #TOC a.active { color: var(--bc-primary-text); font-weight: 700; }
+a { color: var(--bc-blue); }
 
 main.content { counter-reset: bc-example bc-practice; }
 
@@ -36,76 +56,112 @@ h1, h2, h3, h4, h5, .title, .chapter-title {
   font-family: var(--bc-head);
   font-weight: 700;
   letter-spacing: 0;
+  color: var(--bc-heading);
 }
 
-/* Chapter opener band */
+/* Chapter opener: gradient band, layered depth, embossed title */
 #title-block-header .title,
 main h1.title {
-  background: var(--bc-primary);
-  color: #fff;
-  padding: 1.4rem 1.4rem 1.2rem;
-  border-radius: 0 0 2.2rem 0;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, var(--bc-primary) 0%, color-mix(in srgb, var(--bc-primary) 80%, var(--bc-deep)) 100%);
+  color: var(--bc-on-primary);
+  padding: 1.5rem 1.5rem 1.3rem;
+  border-radius: var(--bc-radius) var(--bc-radius) 2.4rem var(--bc-radius);
   font-size: 2.1rem;
   line-height: 1.15;
-  margin: 0 0 1.4rem;
+  margin: 0 0 1.6rem;
+  box-shadow: var(--bc-shadow-lift), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.22), 0 -1px 0 rgba(255, 255, 255, 0.18);
+}
+#title-block-header .title::after,
+main h1.title::after {
+  content: "";
+  position: absolute;
+  right: -3rem;
+  top: -3rem;
+  width: 12rem;
+  height: 12rem;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  pointer-events: none;
 }
 main h1.title .chapter-number {
   display: block;
-  font-size: 3.4rem;
+  font-size: 3.6rem;
   font-weight: 800;
   line-height: 1;
   margin-bottom: 0.2rem;
+  text-shadow: 3px 3px 0 color-mix(in srgb, var(--bc-primary) 55%, var(--bc-deep)), 0 -1px 0 rgba(255, 255, 255, 0.3), 0 8px 18px rgba(0, 0, 0, 0.25);
 }
 main h1.title .chapter-number::before {
   content: "BAB";
   display: block;
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-shadow: none;
 }
 :lang(en) main h1.title .chapter-number::before { content: "CHAPTER"; }
 
-/* Numbered section banner */
+/* Section banner: gradient pill with soft depth; number in an inset chip */
 main h2 {
-  background: var(--bc-primary);
-  color: #fff;
+  background: linear-gradient(100deg, var(--bc-primary), color-mix(in srgb, var(--bc-primary) 84%, var(--bc-deep)));
+  color: var(--bc-on-primary);
   padding: 0.45rem 0.9rem;
-  border-radius: 0.6rem 0.6rem 0.6rem 0;
+  border-radius: var(--bc-radius) var(--bc-radius) var(--bc-radius) 0;
   font-size: 1.6rem;
   margin: 2.2rem 0 1rem;
   border: 0;
+  box-shadow: var(--bc-shadow);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 main h2.unnumbered,
-main section.unnumbered > h2 { background: var(--bc-navy); border-radius: 0.6rem; }
-main h2 .header-section-number { margin-right: 0.45rem; }
+main section.unnumbered > h2 { background: linear-gradient(100deg, var(--bc-navy), color-mix(in srgb, var(--bc-navy) 84%, var(--bc-deep))); border-radius: var(--bc-radius); }
+main h2 .header-section-number {
+  margin-right: 0.5rem;
+  padding: 0 0.45rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.16);
+  color: inherit;
+}
 main h2, main h3 { clear: both; }
 main h3 .header-section-number, main h4 .header-section-number { display: none; }
 main .quarto-title-meta { margin-top: 0.4rem; }
-main h3 { font-size: 1.45rem; color: var(--bc-ink); margin-top: 1.6rem; }
-main h4 { font-size: 1.15rem; color: var(--bc-primary); }
+/* Subsection: accent bar */
+main h3 {
+  font-size: 1.45rem;
+  color: var(--bc-heading);
+  margin-top: 1.6rem;
+  padding-left: 0.75rem;
+  border-left: 5px solid var(--bc-primary);
+  border-radius: 3px;
+}
+main h4 { font-size: 1.15rem; color: var(--bc-primary-text); }
 main h5 { font-size: 1rem; color: var(--bc-navy); font-family: var(--bc-body); }
 
 ul li::marker { color: var(--bc-primary); }
 ol li::marker { color: var(--bc-navy); font-weight: 700; }
 
-/* Tables: blue header, banded rows */
+/* Tables: rounded, lifted, header row + banded rows */
 main table {
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 0.45rem;
+  border-radius: var(--bc-radius);
   overflow: hidden;
   font-size: 0.92rem;
   margin: 1rem 0 1.2rem;
+  box-shadow: var(--bc-shadow);
 }
 main table thead th, main table thead td {
-  background: var(--bc-blue) !important;
-  color: #fff !important;
+  background: var(--bc-table-head) !important;
+  color: var(--bc-on-primary) !important;
   font-weight: 700;
   border: 0 !important;
 }
-main table tbody tr:nth-child(odd) td { background: var(--bc-blue-soft); }
-main table tbody tr:nth-child(even) td { background: var(--bc-blue-softer); }
-main table td, main table th { border: 0; border-right: 1px solid #fff; padding: 0.4rem 0.6rem; }
+main table tbody tr:nth-child(odd) td { background: var(--bc-blue-soft); color: var(--bc-ink); }
+main table tbody tr:nth-child(even) td { background: var(--bc-blue-softer); color: var(--bc-ink); }
+main table td, main table th { border: 0; border-right: 1px solid var(--bc-paper); padding: 0.4rem 0.6rem; }
 caption, .figure-caption, figcaption {
   font-style: italic;
   font-size: 0.88rem;
@@ -113,10 +169,12 @@ caption, .figure-caption, figcaption {
   caption-side: top;
 }
 figcaption strong, caption strong { font-style: italic; }
+main figure img, main .figure img, main p > img { border-radius: var(--bc-radius); box-shadow: var(--bc-shadow); }
 
 blockquote {
   background: var(--bc-blue-softer);
   border-left: 3px solid var(--bc-blue);
+  border-radius: 0 var(--bc-radius) var(--bc-radius) 0;
   padding: 0.6rem 0.9rem;
   color: var(--bc-ink);
 }
@@ -126,7 +184,9 @@ blockquote {
   position: relative;
   margin: 1.3rem 0 1.4rem;
   padding: 0.8rem 1rem 0.9rem;
-  border-radius: 0.5rem;
+  border-radius: var(--bc-radius);
+  color: var(--bc-ink);
+  box-shadow: var(--bc-shadow);
   page-break-inside: avoid;
 }
 .bc-box > p:last-child { margin-bottom: 0; }
@@ -139,9 +199,10 @@ blockquote {
 .bc-box .box-label strong, .bc-aside .box-label strong { color: inherit; }
 
 .worked-example, .givens, .practice, .review, .summary {
-  background: #fff;
+  background: var(--bc-surface);
   border: 1.5px solid var(--bc-accent);
   padding-top: 0;
+  box-shadow: var(--bc-shadow-lift);
 }
 .worked-example > p:first-child .box-label,
 .givens > p:first-child .box-label,
@@ -149,19 +210,20 @@ blockquote {
 .review > p:first-child .box-label,
 .summary > p:first-child .box-label {
   display: inline-block;
-  color: #fff;
-  background: var(--bc-accent);
+  color: var(--bc-on-primary);
+  background: linear-gradient(100deg, var(--bc-accent), color-mix(in srgb, var(--bc-accent) 82%, var(--bc-deep)));
   margin: 0 0 0.5rem -1rem;
   padding: 0.35rem 1rem;
-  border-radius: 0.45rem 0 0.6rem 0;
+  border-radius: calc(var(--bc-radius) - 2px) 0 var(--bc-radius) 0;
   font-size: 1.2rem;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
 }
 .practice { border-color: var(--bc-navy); }
-.practice > p:first-child .box-label { background: var(--bc-navy); }
+.practice > p:first-child .box-label { background: linear-gradient(100deg, var(--bc-navy), color-mix(in srgb, var(--bc-navy) 82%, var(--bc-deep))); }
 .review { border-color: var(--bc-blue); }
-.review > p:first-child .box-label { background: var(--bc-primary); }
+.review > p:first-child .box-label { background: linear-gradient(100deg, var(--bc-primary), color-mix(in srgb, var(--bc-primary) 82%, var(--bc-deep))); }
 .summary { border-color: var(--bc-blue); background: var(--bc-blue-softer); }
-.summary > p:first-child .box-label { background: var(--bc-blue); }
+.summary > p:first-child .box-label { background: linear-gradient(100deg, var(--bc-blue), color-mix(in srgb, var(--bc-blue) 82%, var(--bc-deep))); }
 
 .bc-numbered-example:not(.bc-explicit-title) { counter-increment: bc-example; }
 .bc-numbered-example:not(.bc-explicit-title) > p:first-child .box-label::after { content: " " counter(bc-example); }
@@ -170,27 +232,29 @@ blockquote {
 
 .objectives {
   background: var(--bc-primary-soft);
-  border-radius: 0 0 0.6rem 0.6rem;
+  border-radius: 0 0 var(--bc-radius) var(--bc-radius);
   margin-top: -0.6rem;
 }
-.objectives .box-label { font-family: var(--bc-body); font-size: 1.02rem; color: var(--bc-ink); }
+.objectives .box-label { font-family: var(--bc-body); font-size: 1.02rem; color: var(--bc-primary-text); }
 
 .definition, .key-equation {
-  background: var(--bc-blue-soft);
-  border-radius: 0;
+  background: linear-gradient(180deg, var(--bc-blue-softer), var(--bc-blue-soft));
+  border: 1px solid color-mix(in srgb, var(--bc-navy) 25%, transparent);
   text-align: center;
   font-weight: 600;
 }
+.definition .box-label, .key-equation .box-label { color: var(--bc-navy); }
 .workspace, .think { background: var(--bc-green-soft); border-left: 4px solid var(--bc-green); }
 .workspace .box-label, .think .box-label { color: var(--bc-green); }
 .exam-trap { background: var(--bc-red-soft); border-left: 4px solid var(--bc-red); }
 .exam-trap .box-label { color: var(--bc-red); }
 .hook { background: var(--bc-blue-softer); border-left: 4px solid var(--bc-primary); }
-.hook .box-label { color: var(--bc-primary-dark); }
+.hook .box-label { color: var(--bc-primary-text); }
 .practical { background: var(--bc-purple-soft); border-left: 4px solid var(--bc-purple); }
 .practical .box-label { color: var(--bc-purple); }
 .note { background: var(--bc-grey-soft); border-left: 4px solid var(--bc-grey); }
-.figure-brief { background: #fff; border: 1.5px dashed var(--bc-grey); color: var(--bc-grey); font-style: italic; }
+.note .box-label { color: var(--bc-grey); }
+.figure-brief { background: var(--bc-surface); border: 1.5px dashed var(--bc-grey); color: var(--bc-grey); font-style: italic; box-shadow: none; }
 .figure-brief .box-label { color: var(--bc-grey); font-style: normal; }
 
 /* Sidebar notes float to the outer side on wide screens */
@@ -203,17 +267,20 @@ blockquote {
   padding: 0.55rem 0.7rem 0.6rem;
   font-size: 0.88rem;
   line-height: 1.4;
+  color: var(--bc-ink);
   border-top: 3px solid var(--bc-grey);
-  border-radius: 0 0 0.4rem 0.4rem;
+  border-radius: 4px 4px var(--bc-radius) var(--bc-radius);
   background: var(--bc-grey-soft);
+  box-shadow: var(--bc-shadow);
 }
-.bc-aside .box-label { text-align: right; text-transform: uppercase; font-size: 0.95rem; }
+.bc-aside .box-label { text-align: right; text-transform: uppercase; font-size: 0.95rem; color: var(--bc-grey); }
 .bc-aside > p:last-child { margin-bottom: 0; }
 .bc-aside.quick-check { border-color: var(--bc-green); background: var(--bc-green-soft); }
 .bc-aside.quick-check .box-label { color: var(--bc-green); }
 .bc-aside.remember { border-color: var(--bc-primary); background: var(--bc-primary-soft); }
-.bc-aside.remember .box-label { color: var(--bc-primary-dark); }
-.bc-aside.key-terms, .bc-aside.qr { border-color: var(--bc-navy); background: var(--bc-blue-soft); }
+.bc-aside.remember .box-label { color: var(--bc-primary-text); }
+.bc-aside.key-terms { border-color: var(--bc-navy); background: var(--bc-blue-soft); }
+.bc-aside.qr { border-color: var(--bc-navy); background: var(--bc-surface); }
 .bc-aside.key-terms .box-label, .bc-aside.qr .box-label { color: var(--bc-navy); }
 .bc-aside.enrichment { border-color: var(--bc-purple); background: var(--bc-purple-soft); }
 .bc-aside.enrichment .box-label { color: var(--bc-purple); }
@@ -226,4 +293,7 @@ blockquote {
   .bc-aside { float: none; width: auto; max-width: none; margin: 1rem 0; }
   main h2 { font-size: 1.35rem; }
   #title-block-header .title, main h1.title { font-size: 1.7rem; }
+}
+@media print {
+  .bc-box, .bc-aside, main table, main h2, main h1.title { box-shadow: none; }
 }

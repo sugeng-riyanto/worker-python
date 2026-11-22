@@ -25,6 +25,7 @@ class BookMetadata:
     identifier: str = ""
     css_files: list[str] = field(default_factory=list)
     theme: str = ""
+    palette: str = ""
 
     def as_yaml_document(self) -> dict:
         """Metadata fragment stored back into a generated archive."""
@@ -36,6 +37,8 @@ class BookMetadata:
         document: dict = {"book": book, "lang": self.lang}
         if self.theme:
             document["bc-theme"] = self.theme
+        if self.palette:
+            document["bc-palette"] = self.palette
         epub: dict = {}
         if self.date:
             epub["date"] = self.date
@@ -109,6 +112,13 @@ def _theme(value: object) -> str:
     return text if text in THEMES else ""
 
 
+def _palette(value: object) -> str:
+    from physics_studio.palettes import PALETTES
+
+    text = _clean(value, 20).lower()
+    return text if text in PALETTES else ""
+
+
 def parse_quarto_yaml(text: str) -> BookMetadata:
     """Honor title, author, language, cover, and EPUB metadata. Ignore everything else."""
     if len(text.encode("utf-8")) > 32_000:
@@ -151,4 +161,5 @@ def parse_quarto_yaml(text: str) -> BookMetadata:
     identifier = epub.get("identifier") or epub.get("isbn") or ""
     meta.identifier = _clean(identifier, 80)
     meta.theme = _theme(loaded.get("bc-theme") or book.get("theme") or book.get("bc-theme"))
+    meta.palette = _palette(loaded.get("bc-palette") or book.get("palette") or book.get("bc-palette"))
     return meta
