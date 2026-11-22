@@ -34,6 +34,8 @@ def run(markdown: str, to: str, lang: str | None = "id") -> str:
             "-L",
             str(ASSETS / "textbook.lua"),
             "-L",
+            str(ASSETS / "textbook-extras.lua"),
+            "-L",
             str(ASSETS / "gold-boxes.lua"),
         ],
         input=markdown,

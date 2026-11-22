@@ -149,7 +149,7 @@ class TextbookStagingTests(unittest.TestCase):
     def test_textbook_filters_run_before_the_box_filter(self):
         work = self.stage({"bab-01.qmd": "# Gerak\n\nTeks.\n"}, {"PHYSICS_FONT_DIR": "/nonexistent"})
         config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
-        self.assertEqual(config["filters"], ["textbook.lua", "gold-boxes.lua"])
+        self.assertEqual(config["filters"], ["textbook.lua", "textbook-extras.lua", "gold-boxes.lua"])
         self.assertEqual(config["bc-theme"], "studio")
         self.assertTrue(config["crossref"]["chapters"])
         self.assertIn("textbook.css", config["format"]["html"]["css"])
@@ -171,6 +171,10 @@ class TextbookStagingTests(unittest.TestCase):
         work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
         config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
         self.assertEqual(config["format"]["typst"]["font-paths"], ["_fonts"])
+        # v14.2 default: HTML links Google Fonts instead of inlining them.
+        self.assertNotIn("textbook-fonts.css", config["format"]["html"]["css"])
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name, "PHYSICS_HTML_FONTS": "embed"})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
         self.assertTrue((work / "_fonts").is_symlink())
         self.assertEqual(config["format"]["html"]["css"][0], "textbook-fonts.css")
         css = (work / "textbook-fonts.css").read_text(encoding="utf-8")
