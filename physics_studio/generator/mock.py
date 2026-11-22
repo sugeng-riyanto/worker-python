@@ -15,7 +15,7 @@ class MockGemini:
         if index % 3 == 1:
             box = "::: {.givens}\n**G (Given):** 120 m east and 50 m north.\n:::\n"
         elif index % 3 == 2:
-            box = "::: {.workspace}\n250 mm = ________ m\n\nTeacher stamp: [ ] L1 [ ] L2 [ ] L3\n:::\n"
+            box = "::: {.workspace}\n250 mm = ________ m\n\nTeacher verification: [ ] AO1 · Remember [ ] AO2 · Apply [ ] AO3 · Evaluate\n:::\n"
         else:
             box = "::: {.exam-trap}\nDividing 5 cm squared by 100 is not a conversion to square metres.\n:::\n"
         return box + "\nA measurement is a number multiplied by a unit.\n"

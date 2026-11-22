@@ -45,8 +45,9 @@ COPY fixtures ./fixtures
 COPY scripts ./scripts
 COPY tests ./tests
 
-# Every palette must pass the WCAG AA contrast checks, or the build fails.
-RUN cd /app && python -m unittest -q tests.test_palettes
+# Every palette must pass the WCAG AA contrast checks, and math / justification /
+# scaffold / graph-paper filters must hold in every format, or the build fails.
+RUN cd /app && python -m unittest -q tests.test_palettes tests.test_v142
 
 # Compile the real template once so a broken template fails the build.
 RUN cd /app && PYTHONPATH=/app python /app/scripts/warm_template.py /opt/warm \

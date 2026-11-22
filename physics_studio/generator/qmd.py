@@ -8,7 +8,7 @@ from dataclasses import dataclass
 
 from physics_studio.safety import sanitize_generated_qmd
 
-PROMPT_VERSION = "gold-1"
+PROMPT_VERSION = "gold-2"
 WORDS_PER_PAGE = 320
 
 MANDATORY_MODULES = (
@@ -24,16 +24,27 @@ MANDATORY_MODULES = (
     "Self-diagnostic and teacher attainment rubric",
 )
 
-BOX_GUIDE = """Write Quarto markdown. Use these fenced divs where they belong, and no other special syntax:
-::: {.givens}
-G (Given), I (Identify), V (Visualize), E (Equation), N/S (Numbers and sanity check).
+BOX_GUIDE = """Write Quarto markdown in English. Use these fenced divs where they belong, and no other special syntax.
+Command words: use the command word of each learning objective (state, define, describe, explain,
+calculate, determine, sketch, plot, compare, evaluate, deduce, suggest, predict, design, investigate),
+and vary them across tasks; do not reduce every activity to predict-observe-explain.
+Problem-solving scaffolds: choose the ones that suit the content, never all of them. Each is a
+multi-line fenced div (opening ::: {.class} line, content, closing ::: line):
+- .guess: calculations; Given, Unknown, Equation, Substitute, Solve as a bullet list
+- .free-body: forces; five steps to draw and use a free-body diagram
+- .cer: investigations and arguments; Claim, Evidence, Reasoning
+- .ideal: multi-step or design problems; .data-analysis: tables and graphs (with a graph-paper div)
+- .error-analysis: a wrong worked line to correct; .estimate-check: estimate first, then check
+- .think-pair-share, .concept-map, .real-world, .poe (Predict-Observe-Explain only where a demo fits)
+- .givens: G (Given), I (Identify), V (Visualize), E (Equation), N/S (Numbers and sanity check)
+- .exam-trap: the mistaken step, then the accurate reasoning
+Pictures: ::: {.figure-frame height="45mm" caption="..."} with what the illustrator must draw, then :::
+Plotting: ::: {.graph-paper width="110mm" height="70mm" x-label="t / s" y-label="v / m s⁻¹" x-max="5" y-max="10"} then :::
+Teacher verification at the end of the chapter, one line per objective with its assessment objective and Bloom level:
+::: {.teacher-verification}
+- [ ] AO2 · Apply: Calculates acceleration from velocity-time data.
 :::
-::: {.workspace}
-Prediction or calculation lines, then a teacher verification stamp: [ ] L1 [ ] L2 [ ] L3.
-:::
-::: {.exam-trap}
-The mistaken step, then the accurate reasoning.
-:::
+Math: inline $...$, display $$...$$ on its own lines, units upright with a thin space: $12\\,\\mathrm{m\\,s^{-1}}$.
 Do not emit raw Typst, shortcodes, executable code cells, or image file paths.
 Do not wrap the answer in a code fence and do not add a title heading.
 """

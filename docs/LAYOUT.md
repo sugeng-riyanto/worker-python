@@ -135,3 +135,14 @@ OUTPUT FORMAT (Quarto Markdown, renders as an MCE-style student book):
 - Depth:
   - PDF: 8 pt rounded corners on boxes, tables, and images; two offset shadow layers under the opener, section bands, and short boxes; gradient bands; an embossed chapter number and title (an offset darker copy plus a faint highlight); a gradient accent bar on H3; a translucent number chip in H2.
   - HTML: `box-shadow`, gradients, and an embossed `text-shadow`; no shadows in print.
+
+## Formats, math and pedagogy (v14.2)
+
+- **Progressive outputs.** `ALL` jobs publish each format the moment it is rendered (`outputs` grows while `state` is `running`, `pending` lists the rest). File links work while the job runs.
+- **Slim HTML.** Pandoc's `embed-resources` inlined `<link rel="prev/next">` pages as `data:text/html` URLs and the theme fonts as base64; `slim_html` drops those and links Google Fonts (and MathJax) from a CDN. The sample book went from 10.9 MB to 1.4 MB.
+- **Math.** `textbook-extras.lua` normalises AI-style TeX before any writer runs: `\SI`/`\qty`/`\si`/`\unit`/`\num` (siunitx), `\degree`, `\celsius`, `\ohm`, `\tfrac`, escaped `\_ \* \$` inside math, and stray `\( … \)` / `\[ … \]` delimiters. PDF uses Typst math, HTML MathJax, EPUB MathML and DOCX native Office Math (OMML). `tests/test_v142.py` renders a set of tricky equations and fails on any TeX leak.
+- **Justified text.** Body paragraphs are justified with hyphenation in every format (Typst `par(justify: true)`, CSS `text-align: justify; hyphens: auto`, DOCX `w:jc both` + `autoHyphenation`). Headings, captions, tables, lists and definition boxes stay left-aligned.
+- **Scaffolds.** Besides `worked-example` (G.I.V.E.N.S.) and `poe`: `guess` (GRESA), `ideal`, `cer`, `think-pair-share`, `concept-map`, `estimate-check`, `free-body`, `data-analysis`, `error-analysis`, `real-world`. Each is a coloured box with a chip (PDF/HTML/EPUB) and a dedicated DOCX paragraph style.
+- **Teacher verification.** `::: {.teacher-verification}` holds a checklist of objectives tagged with assessment objective and Bloom level (`- [ ] AO2 · Apply: …`), generated per chapter by the studio.
+- **Image placeholders.** `::: {.figure-frame height="45mm" caption="…"}` + an illustrator brief renders a dashed, rounded, numbered figure frame in every format.
+- **Graph paper.** `::: {.graph-paper width="110mm" height="70mm" x-label="t / s" y-label="v / m s⁻¹" x-max="10" y-max="30" points="0,0 2,6" line="best-fit"}` draws 1 mm minor and 1 cm major gridlines with labelled axes (Typst in PDF, inline SVG in HTML/EPUB, SVG image in DOCX); `points` and `line` turn it into a plotted graph.
