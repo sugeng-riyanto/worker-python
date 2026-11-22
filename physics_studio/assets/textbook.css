@@ -289,11 +289,70 @@ blockquote {
 .bc-aside.link { border-color: var(--bc-accent); background: var(--bc-red-soft); }
 .bc-aside.link .box-label { color: var(--bc-accent); }
 
+/* ---------- v14.2: justified body text ---------- */
+main p, .bc-box > p, section > p, body > p {
+  text-align: justify;
+  text-justify: inter-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+main h1, main h2, main h3, main h4, main h5, main h6,
+main li > p, main td p, main th p, main figcaption, main .figure-caption,
+.bc-aside p, .definition p, .key-equation p, .bc-frame-caption p, .bc-frame-box p, .box-label {
+  text-align: left;
+  -webkit-hyphens: manual;
+  hyphens: manual;
+}
+.definition p, .key-equation p { text-align: center; }
+
+/* ---------- v14.2: problem-solving scaffolds ---------- */
+.guess, .free-body { background: var(--bc-blue-softer); border-left: 4px solid var(--bc-navy); }
+.guess .box-label, .free-body .box-label { color: var(--bc-navy); }
+.cer, .data-analysis { background: var(--bc-blue-softer); border-left: 4px solid var(--bc-blue); }
+.cer .box-label, .data-analysis .box-label { color: var(--bc-blue); }
+.ideal, .concept-map { background: var(--bc-purple-soft); border-left: 4px solid var(--bc-purple); }
+.ideal .box-label, .concept-map .box-label { color: var(--bc-purple); }
+.think-pair-share, .poe { background: var(--bc-green-soft); border-left: 4px solid var(--bc-green); }
+.think-pair-share .box-label, .poe .box-label { color: var(--bc-green); }
+.estimate-check, .real-world { background: var(--bc-primary-soft); border-left: 4px solid var(--bc-primary); }
+.estimate-check .box-label, .real-world .box-label { color: var(--bc-primary-text); }
+.error-analysis { background: var(--bc-red-soft); border-left: 4px solid var(--bc-red); }
+.error-analysis .box-label { color: var(--bc-red); }
+.teacher-verification { background: var(--bc-grey-soft); border: 1.5px dashed var(--bc-grey); box-shadow: none; }
+.teacher-verification .box-label { color: var(--bc-grey); }
+.teacher-verification ul { list-style: none; padding-left: 0.2rem; }
+.teacher-verification li { margin: 0.25rem 0; }
+
+/* ---------- v14.2: image placeholders and graph paper ---------- */
+.bc-figure-frame, .bc-graph-paper { margin: 1.4rem 0; }
+.bc-frame-box {
+  border: 1.5px dashed var(--bc-grey);
+  border-radius: var(--bc-radius);
+  background: var(--bc-grey-soft);
+  color: var(--bc-ink);
+  padding: 0.7rem 1rem;
+  box-shadow: var(--bc-shadow);
+  font-style: italic;
+}
+.bc-frame-hint { font-style: normal; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; color: var(--bc-grey); font-size: 0.85rem; }
+.bc-frame-caption p { font-size: 0.9rem; font-style: italic; margin: 0.45rem 0 0; color: var(--bc-ink); }
+.bc-frame-caption strong { color: var(--bc-navy); font-style: normal; margin-right: 0.3rem; }
+.bc-graph-frame {
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.6rem;
+  border-radius: var(--bc-radius);
+  border: 1px solid var(--bc-blue-soft);
+  background: var(--bc-surface);
+  box-shadow: var(--bc-shadow);
+}
+.bc-graph-frame svg { display: block; max-width: 100%; height: auto; }
+
 @media (max-width: 720px) {
   .bc-aside { float: none; width: auto; max-width: none; margin: 1rem 0; }
   main h2 { font-size: 1.35rem; }
   #title-block-header .title, main h1.title { font-size: 1.7rem; }
 }
 @media print {
-  .bc-box, .bc-aside, main table, main h2, main h1.title { box-shadow: none; }
+  .bc-box, .bc-aside, main table, main h2, main h1.title, .bc-frame-box, .bc-graph-frame { box-shadow: none; }
 }

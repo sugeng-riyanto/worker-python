@@ -6,6 +6,10 @@
 -- Sidebar notes (PDF outer margin, floated in HTML):
 --   {.quick-check} {.remember} {.key-terms} {.qr} {.teacher-note}
 --   {.enrichment} {.info} {.link}
+-- Problem-solving scaffolds (v14.2), main column:
+--   {.guess} {.ideal} {.cer} {.think-pair-share} {.concept-map} {.estimate-check}
+--   {.free-body} {.data-analysis} {.error-analysis} {.real-world} {.poe}
+--   {.teacher-verification}
 -- Indonesian aliases are accepted (e.g. .contoh-soal, .latihan, .tujuan).
 -- An optional title="..." attribute overrides the default label.
 
@@ -33,6 +37,18 @@ local ALIAS = {
   enrichment = "enrichment", pengayaan = "enrichment",
   info = "info", ["did-you-know"] = "info", tahukah = "info",
   link = "link", tautan = "link",
+  guess = "guess", gresa = "guess", gusss = "guess",
+  ideal = "ideal",
+  cer = "cer", ["claim-evidence-reasoning"] = "cer", ["klaim-bukti-penalaran"] = "cer",
+  ["think-pair-share"] = "think-pair-share", tps = "think-pair-share",
+  ["concept-map"] = "concept-map", ["peta-konsep"] = "concept-map",
+  ["estimate-check"] = "estimate-check", estimate = "estimate-check", estimation = "estimate-check",
+  ["free-body"] = "free-body", fbd = "free-body", ["free-body-diagram"] = "free-body",
+  ["data-analysis"] = "data-analysis", ["analisis-data"] = "data-analysis",
+  ["error-analysis"] = "error-analysis", ["spot-the-error"] = "error-analysis", ["analisis-kesalahan"] = "error-analysis",
+  ["real-world"] = "real-world", application = "real-world", ["real-world-application"] = "real-world", penerapan = "real-world",
+  poe = "poe", ["predict-observe-explain"] = "poe",
+  ["teacher-verification"] = "teacher-verification", ["verifikasi-guru"] = "teacher-verification",
 }
 
 -- label = { id, en }; numbered boxes get "<label> <chapter>.<n>" in the PDF.
@@ -60,6 +76,18 @@ local SPECS = {
   enrichment = { label = { "Pengayaan", "Enrichment" }, aside = true, style = "BoxAside", fill = "#EFE6F6", accent = "#7A4FA0" },
   info = { label = { "Tahukah Kamu?", "Did You Know?" }, aside = true, style = "BoxAside", fill = "#F1F8FC", accent = "#0089C0" },
   link = { label = { "Tautan", "Link" }, aside = true, style = "BoxAside", fill = "#FCE7E6", accent = "#D5164F" },
+  guess = { label = { "GUESS: Diketahui · Ditanya · Rumus · Substitusi · Selesaikan", "GUESS: Given · Unknown · Equation · Substitute · Solve" }, style = "BoxStrategyNavy" },
+  ideal = { label = { "Pemecahan Masalah IDEAL", "IDEAL Problem Solving" }, style = "BoxStrategyPurple" },
+  cer = { label = { "Klaim · Bukti · Penalaran", "Claim · Evidence · Reasoning" }, style = "BoxStrategyBlue" },
+  ["think-pair-share"] = { label = { "Pikir · Berpasangan · Berbagi", "Think · Pair · Share" }, style = "BoxThink" },
+  ["concept-map"] = { label = { "Peta Konsep", "Concept Map" }, style = "BoxStrategyPurple" },
+  ["estimate-check"] = { label = { "Perkirakan, lalu Periksa", "Estimate, then Check" }, style = "BoxStrategyOrange" },
+  ["free-body"] = { label = { "Diagram Gaya Bebas dalam Lima Langkah", "Free-Body Diagram in Five Steps" }, style = "BoxStrategyNavy" },
+  ["data-analysis"] = { label = { "Analisis Data", "Data Analysis" }, style = "BoxStrategyBlue" },
+  ["error-analysis"] = { label = { "Analisis Kesalahan: Temukan yang Keliru", "Error Analysis: Spot the Mistake" }, style = "ExamTrap" },
+  ["real-world"] = { label = { "Penerapan dalam Kehidupan", "Real-World Application" }, style = "BoxStrategyOrange" },
+  poe = { label = { "Prediksi · Amati · Jelaskan", "Predict · Observe · Explain" }, style = "WorkspaceBox" },
+  ["teacher-verification"] = { label = { "Verifikasi Guru", "Teacher Verification" }, style = "BoxNote" },
 }
 
 -- Sidebar notes longer than this stay in the main column (the sidebar is 34 mm).
