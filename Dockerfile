@@ -33,6 +33,7 @@ RUN mkdir -p /usr/local/share/fonts/textbook \
     && for w in Regular It Semibold SemiboldIt Bold BoldIt Black; do cp /tmp/ss3/OTF/SourceSans3-$w.otf /usr/local/share/fonts/textbook/; done \
     && for w in Regular It Bold; do cp /tmp/ss3w/WOFF2/OTF/SourceSans3-$w.otf.woff2 /usr/local/share/fonts/textbook/SourceSans3-$w.woff2; done \
     && for w in Regular Medium SemiBold Bold ExtraBold; do curl -fsSL -o /usr/local/share/fonts/textbook/BarlowCondensed-$w.ttf https://github.com/google/fonts/raw/main/ofl/barlowcondensed/BarlowCondensed-$w.ttf; done \
+    && curl -fsSL -o /usr/local/share/fonts/textbook/NotoSansMath-Regular.ttf https://github.com/google/fonts/raw/main/ofl/notosansmath/NotoSansMath-Regular.ttf \
     && fc-cache -f \
     && rm -rf /tmp/ss3.zip /tmp/ss3w.zip /tmp/ss3 /tmp/ss3w
 

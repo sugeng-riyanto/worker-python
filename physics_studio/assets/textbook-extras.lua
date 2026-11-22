@@ -23,7 +23,7 @@ local PREFIX = { kilo = "k", mega = "M", giga = "G", milli = "m", micro = "\\mu 
 local UNIT = {
   metre = "m", meter = "m", second = "s", gram = "g", newton = "N", joule = "J", watt = "W",
   pascal = "Pa", hertz = "Hz", volt = "V", ampere = "A", coulomb = "C", kelvin = "K", mole = "mol",
-  ohm = "\\Omega ", celsius = "{}^{\\circ}C", degree = "{}^{\\circ}", hour = "h", minute = "min",
+  ohm = "\\Omega ", celsius = "°C", degree = "°", hour = "h", minute = "min",
   litre = "L", liter = "L", tesla = "T", weber = "Wb", farad = "F", electronvolt = "eV", percent = "\\%",
 }
 
@@ -104,8 +104,12 @@ end
 function normalize_tex(tex)
   local t = tex
   t = expand_si(t)
-  t = t:gsub("\\degree%f[%A]", "^{\\circ}")
-  t = t:gsub("\\celsius%f[%A]", "{}^{\\circ}\\mathrm{C}")
+  t = t:gsub("\\degree%f[%A]", "°")
+  t = t:gsub("\\celsius%f[%A]", "\\mathrm{°C}")
+  -- Degrees as the plain sign: an empty-base superscript ({}^{\circ}) becomes a
+  -- zero-width box in Word / LibreOffice equations.
+  t = t:gsub("{}%^{\\circ}", "°"):gsub("{}%^\\circ%f[%A]", "°")
+  t = t:gsub("%^{\\circ}", "°"):gsub("%^\\circ%f[%A]", "°")
   t = t:gsub("\\ohm%f[%A]", "\\Omega")
   t = t:gsub("\\tfrac%f[%A]", "\\frac")
   t = t:gsub("\\textrm%f[%A]", "\\mathrm")

@@ -21,6 +21,20 @@ def _pandoc() -> list[str] | None:
 PANDOC = _pandoc()
 
 
+def run_binary(cmd, input=b"", **_):
+    """Run Pandoc writing a binary format (DOCX/EPUB) to a temporary file.
+
+    `quarto pandoc -o -` can append a newline to binary stdout, which corrupts the zip."""
+    import tempfile, types
+    cmd = list(cmd)
+    i = cmd.index("-o")
+    with tempfile.TemporaryDirectory() as tmp:
+        target = Path(tmp) / "out.bin"
+        cmd[i + 1] = str(target)
+        subprocess.run(cmd, input=input, capture_output=True, check=True)
+        return types.SimpleNamespace(stdout=target.read_bytes())
+
+
 def run(markdown: str, to: str, lang: str | None = "id") -> str:
     proc = subprocess.run(
         [
@@ -154,7 +168,7 @@ class BoxRenderingTests(unittest.TestCase):
         self.assertIn('#bc-box(kind: "workspace", title: [Cek Cepat]', typst)
 
     def test_docx_uses_custom_styles(self):
-        proc = subprocess.run(
+        proc = run_binary(
             [*PANDOC, "-f", "markdown", "-t", "docx", "-o", "-", "-L", str(ASSETS / "textbook.lua"), "-L", str(ASSETS / "gold-boxes.lua")],
             input="::: {.practice}\n1. Hitung.\n:::\n".encode("utf-8"),
             capture_output=True,

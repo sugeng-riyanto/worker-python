@@ -181,6 +181,20 @@ class TextbookStagingTests(unittest.TestCase):
         self.assertIn('url("_fonts/SourceSans3-Regular.woff2") format("woff2")', css)
         self.assertNotIn("textbook-fonts.css", config["format"]["epub"]["css"])
 
+    def test_epub_embeds_a_math_font_when_available(self):
+        fonts = tempfile.TemporaryDirectory()
+        self.addCleanup(fonts.cleanup)
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertNotIn("epub-fonts", config["format"]["epub"])
+        (Path(fonts.name) / "NotoSansMath-Regular.ttf").write_bytes(b"\x00\x01\x00\x00")
+        work = self.stage({"bab-01.qmd": "# A\n"}, {"PHYSICS_FONT_DIR": fonts.name})
+        config = yaml.safe_load((work / "_quarto.yml").read_text(encoding="utf-8"))
+        self.assertEqual(config["format"]["epub"]["epub-fonts"], ["_fonts/NotoSansMath-Regular.ttf"])
+        self.assertIn("epub-math.css", config["format"]["epub"]["css"])
+        self.assertNotIn("epub-math.css", config["format"]["html"]["css"])
+        self.assertIn('url("../fonts/NotoSansMath-Regular.ttf")', (work / "epub-math.css").read_text(encoding="utf-8"))
+
     def test_typst_template_has_no_unescaped_pandoc_dollars(self):
         from physics_studio.staging import ASSETS
 

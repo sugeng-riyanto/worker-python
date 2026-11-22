@@ -14,7 +14,7 @@ from pathlib import Path
 
 from physics_studio import reference_docx
 from physics_studio.render import GOOGLE_FONTS_CSS, slim_html
-from tests.test_filters import ASSETS, PANDOC, run
+from tests.test_filters import ASSETS, PANDOC, run, run_binary
 
 TRICKY = r"""
 # Forces
@@ -62,7 +62,7 @@ class MathTests(unittest.TestCase):
         self.assertIn(r"5.0\,\mathrm{kg}", joined)
         self.assertIn(r"6.02 \times 10^{23}", joined)
         self.assertIn(r"3\,\mathrm{m\,s^{-1}}", joined)
-        self.assertIn(r"20\,\mathrm{{}^{\circ}C}", joined)
+        self.assertIn(r"20\,\mathrm{°C}", joined)
         self.assertIn(r"1.5\,\mathrm{N}", joined)  # \SI in prose becomes math too
         self.assertTrue(any("aligned" in t for t in tex))
 
@@ -74,13 +74,17 @@ class MathTests(unittest.TestCase):
         for to in ("html", "typst", "docx", "epub3"):
             with self.subTest(to=to):
                 if to in ("docx", "epub3"):
-                    proc = subprocess.run(
-                        [*PANDOC, "-f", "markdown", "-t", to, "-M", "lang=en", "-o", "-",
-                         *(["--mathml"] if to == "epub3" else []),
-                         "-L", str(ASSETS / "textbook.lua"), "-L", str(ASSETS / "textbook-extras.lua"),
-                         "-L", str(ASSETS / "gold-boxes.lua")],
-                        input=TRICKY.encode(), capture_output=True, check=True)
-                    archive = zipfile.ZipFile(io.BytesIO(proc.stdout))
+                    # Write to a file: the quarto pandoc wrapper may append a newline
+                    # to binary stdout, which corrupts the zip.
+                    with tempfile.TemporaryDirectory() as tmp:
+                        target = Path(tmp) / ("out." + to)
+                        subprocess.run(
+                            [*PANDOC, "-f", "markdown", "-t", to, "-M", "lang=en", "-o", str(target),
+                             *(["--mathml"] if to == "epub3" else []),
+                             "-L", str(ASSETS / "textbook.lua"), "-L", str(ASSETS / "textbook-extras.lua"),
+                             "-L", str(ASSETS / "gold-boxes.lua")],
+                            input=TRICKY.encode(), capture_output=True, check=True)
+                        archive = zipfile.ZipFile(io.BytesIO(target.read_bytes()))
                     names = [n for n in archive.namelist() if n.endswith((".xhtml", "document.xml"))]
                     text = "".join(archive.read(n).decode("utf-8") for n in names)
                     math_tag = "m:oMath" if to == "docx" else "math"
@@ -97,7 +101,7 @@ class MathTests(unittest.TestCase):
 
     def test_docx_equations_round_trip(self):
         """Word equations (OMML) read back as the same TeX."""
-        proc = subprocess.run(
+        proc = run_binary(
             [*PANDOC, "-f", "markdown", "-t", "docx", "-o", "-", "-L", str(ASSETS / "textbook-extras.lua")],
             input=b"$a = \\frac{v-u}{t}$ and $\\SI{3}{\\metre\\per\\second}$", capture_output=True, check=True)
         back = subprocess.run([*PANDOC, "-f", "docx", "-t", "markdown"], input=proc.stdout, capture_output=True, check=True)
@@ -121,7 +125,7 @@ class ExtrasTests(unittest.TestCase):
         self.assertIn("min-height:50mm", html)
         self.assertIn("Image placeholder", html)
         self.assertIn("Tempat gambar", run(self.FRAME, "html", lang="id"))
-        proc = subprocess.run(
+        proc = run_binary(
             [*PANDOC, "-f", "markdown", "-t", "docx", "-o", "-", "-L", str(ASSETS / "textbook-extras.lua")],
             input=self.FRAME.encode(), capture_output=True, check=True)
         document = zipfile.ZipFile(io.BytesIO(proc.stdout)).read("word/document.xml").decode()
@@ -145,7 +149,7 @@ class ExtrasTests(unittest.TestCase):
         self.assertIn("fit: (2, 0)", typst)
 
     def test_graph_paper_is_an_svg_image_in_docx(self):
-        proc = subprocess.run(
+        proc = run_binary(
             [*PANDOC, "-f", "markdown", "-t", "docx", "-o", "-", "-L", str(ASSETS / "textbook-extras.lua")],
             input=self.GRAPH.encode(), capture_output=True, check=True)
         names = zipfile.ZipFile(io.BytesIO(proc.stdout)).namelist()

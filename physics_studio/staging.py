@@ -27,6 +27,10 @@ STAGED_ASSETS = ("typst-show.typ", "textbook.lua", "textbook-extras.lua", "gold-
 DEFAULT_FONT_DIR = Path("/usr/local/share/fonts/textbook")
 FONT_LINK = "_fonts"
 FONT_CSS = "textbook-fonts.css"
+# EPUB readers draw MathML with the reader's own fonts; many have no glyphs for
+# math italic Greek (U+1D6FC...). Embed an OFL math font so pi, theta, lambda show.
+MATH_FONT = "NotoSansMath-Regular.ttf"
+EPUB_MATH_CSS = "epub-math.css"
 PALETTE_CSS = "textbook-palette.css"
 # (file, family, weight, style) embedded into the single-file HTML.
 _WEB_FONTS = (
@@ -239,6 +243,14 @@ def _write_project_yaml(
 
     # MathML: e-readers render it natively (no script); DOCX uses Word equations (OMML).
     epub: dict = {"toc": True, "css": list(css_files), "html-math-method": "mathml"}
+    if (work / FONT_LINK / MATH_FONT).is_file():
+        (work / EPUB_MATH_CSS).write_text(
+            '@font-face { font-family: "Noto Sans Math"; src: url("../fonts/' + MATH_FONT + '"); }\n'
+            'math { font-family: "Noto Sans Math", "STIX Two Math", "Cambria Math", math; }\n',
+            encoding="utf-8",
+        )
+        epub["css"].append(EPUB_MATH_CSS)
+        epub["epub-fonts"] = [f"{FONT_LINK}/{MATH_FONT}"]
     if metadata.cover_image:
         epub["cover-image"] = metadata.cover_image
     if metadata.description:
