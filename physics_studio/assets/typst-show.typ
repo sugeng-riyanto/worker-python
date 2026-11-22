@@ -311,6 +311,8 @@
     ])
   } else {
     let chip = s.at("chip", default: none)
+    // Checklists already start with a ☐: no bullet in front of it.
+    let body = if kind == "teacher-verification" { set list(marker: [], body-indent: 0pt); body } else { body }
     layout(size => {
     let tall = measure(block(width: size.width - 8mm, body)).height > 110mm
     block(width: 100%, fill: s.fill, stroke: s.stroke, radius: bc-radius, inset: (x: 4mm, y: 3mm), above: 1.2em, below: 1.2em, breakable: tall)[
