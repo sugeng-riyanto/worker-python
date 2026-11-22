@@ -433,7 +433,7 @@
       }
     }
   })
-  figure(kind: "quarto-float-fig", supplement: bc-label("Grafik", "Graph"),
+  figure(kind: "bc-graph", supplement: bc-label("Grafik", "Graph"),
     caption: if caption == [] { none } else { figure.caption(position: bottom, caption) },
     block(breakable: false, radius: bc-radius, stroke: 0.6pt + T.blue-soft, inset: (left: 15mm, right: 4mm, top: 4mm, bottom: 3mm), fill: T.surface,
       grid(columns: (auto,), row-gutter: 6mm,
