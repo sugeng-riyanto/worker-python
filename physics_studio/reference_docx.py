@@ -83,6 +83,12 @@ _BASE_STYLES = {
   <w:rPr><w:rFonts w:ascii="{_HEAD_FONT}" w:hAnsi="{_HEAD_FONT}" w:cs="{_HEAD_FONT}"/><w:b/><w:bCs/><w:color w:val="{_PRIMARY_TEXT}"/><w:sz w:val="24"/><w:szCs w:val="24"/></w:rPr>
 </w:style>
 """,
+    "TOCHeading": f"""<w:style w:type="paragraph" w:styleId="TOCHeading">
+  <w:name w:val="TOC Heading"/><w:basedOn w:val="Normal"/><w:next w:val="Normal"/><w:uiPriority w:val="39"/><w:unhideWhenUsed/><w:qFormat/>
+  <w:pPr><w:keepNext/><w:spacing w:before="240" w:after="240"/></w:pPr>
+  <w:rPr><w:rFonts w:ascii="{_HEAD_FONT}" w:hAnsi="{_HEAD_FONT}" w:cs="{_HEAD_FONT}"/><w:b/><w:bCs/><w:color w:val="{_PRIMARY_TEXT}"/><w:sz w:val="48"/><w:szCs w:val="48"/></w:rPr>
+</w:style>
+""",
     "Title": f"""<w:style w:type="paragraph" w:styleId="Title">
   <w:name w:val="Title"/><w:basedOn w:val="Normal"/><w:next w:val="BodyText"/><w:link w:val="TitleChar"/><w:uiPriority w:val="10"/><w:qFormat/>
   <w:pPr><w:spacing w:before="1200" w:after="200"/></w:pPr>
