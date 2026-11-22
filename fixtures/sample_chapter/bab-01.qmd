@@ -1,0 +1,36 @@
+# Physical Quantities and Measurement
+
+A length of 1.85 m is a magnitude multiplied by a unit. The figure shows a school vernier caliper used for an external diameter.
+
+![Vernier caliper on a B5 grid](images/vernier.png){width=70%}
+
+Base units and a few derived units sit on one strip.
+
+![SI base units](images/units.svg){width=80%}
+
+## A right-angled displacement
+
+::: {.givens}
+**G (Given):** the glider moves 120 m east and 50 m north.
+
+**I (Identify):** the magnitude of the resultant displacement.
+
+**V (Visualize):** a right triangle with those legs.
+
+**E (Equation):** $R = \sqrt{120^2 + 50^2}$.
+
+**N/S (Numbers and sanity check):** $R = 130$ m, which is longer than either leg.
+:::
+
+::: {.workspace}
+Convert each measurement into a base SI unit.
+
+1. 250 mm = ________ m
+2. 320 g = ________ kg
+
+Teacher Verification Stamp: [ ] L1 [ ] L2 [ ] L3
+:::
+
+::: {.exam-trap}
+Converting $5\,\mathrm{cm}^2$ to square metres by dividing by 100 gives $0.05\,\mathrm{m}^2$. Because $1\,\mathrm{m} = 100\,\mathrm{cm}$, $1\,\mathrm{m}^2 = 10\,000\,\mathrm{cm}^2$, so $5\,\mathrm{cm}^2 = 5.0 \times 10^{-4}\,\mathrm{m}^2$.
+:::

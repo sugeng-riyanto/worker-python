@@ -1,0 +1,13 @@
+book:
+  title: "Physical Quantities and Measurement"
+  author: "Sugeng Riyanto"
+  subtitle: "Sample B5 chapter"
+lang: id
+format:
+  epub:
+    publisher: "Physics Textbook Studio"
+    rights: "Copyright 2026 Sugeng Riyanto"
+    description: "Sample chapter with Gold Standard boxes and a figure."
+    identifier: "urn:isbn:9780000000001"
+    date: "2026-11-22"
+    cover-image: images/cover.png
